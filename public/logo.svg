@@ -9,6 +9,16 @@
       <stop offset="1" stop-color="#2563eb"/>
     </linearGradient>
   </defs>
+  <!-- The wordmark follows the viewer's colour scheme: in the app that's its
+       theme (nativeTheme sets prefers-color-scheme), elsewhere the browser's. -->
+  <style>
+    .wordmark { fill: #e5e7eb; }
+    .wordmark-dot { fill: #60a5fa; }
+    @media (prefers-color-scheme: light) {
+      .wordmark { fill: #18181b; }
+      .wordmark-dot { fill: #2563eb; }
+    }
+  </style>
 
   <rect x="4" y="4" width="92" height="92" rx="20" fill="url(#bg)"/>
 
@@ -24,7 +34,7 @@
         fill="#ffd34d" stroke="#0d1122" stroke-width="1.5" stroke-linejoin="round"/>
 
   <text x="118" y="67" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif"
-        font-size="44" font-weight="700" fill="#e5e7eb">
-    <tspan>a</tspan><tspan fill="#60a5fa">.</tspan><tspan>n</tspan><tspan fill="#60a5fa">.</tspan><tspan>c</tspan><tspan fill="#60a5fa">.</tspan><tspan>r</tspan>
+        font-size="44" font-weight="700" class="wordmark">
+    <tspan>a</tspan><tspan class="wordmark-dot">.</tspan><tspan>n</tspan><tspan class="wordmark-dot">.</tspan><tspan>c</tspan><tspan class="wordmark-dot">.</tspan><tspan>r</tspan>
   </text>
 </svg>

@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.1.3**
+**User Guide · version 0.1.4**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.1.3.exe`, from
+1. Download the installer, `ancr Setup 0.1.4.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -75,20 +75,32 @@ start the app.
 
 - **Header:** the environment switcher (the set of variables currently in
   use), **Manage** to edit environments, and the **⚙** settings menu.
-- **Left sidebar:** three sections, each with its own collections:
+- **Activity bar** (the icon strip on the far left): picks what the sidebar
+  shows, one section at a time:
   - **API:** saved HTTP, GraphQL, SSE and gRPC requests.
   - **WebSocket:** saved WebSocket connections.
   - **MCP:** saved MCP servers.
 
-  Click a section's header to collapse or expand it.
+  Click the section already shown to hide the sidebar, and any section to
+  show it again. At the bottom, **{ }** opens the environments and **?** this
+  guide.
+- **Sidebar:** the chosen section's collections. Drag its right edge to make
+  it wider or narrower. ancr remembers the section, the width and whether
+  the sidebar is hidden.
 - **Main panel:** whatever you've selected. That can be a request and its
   response, a WebSocket connection, an MCP server, or the details of a
   collection or folder.
-- **Logs panel** (bottom): a running log of every request sent, connection
-  events and script output. Turn on **Trace** to log full requests and
-  responses (headers, params and body) instead of just the status line.
-  Click **Clear** to empty the log. The panel starts collapsed; click the
-  arrow on its header to expand or collapse it.
+- **Bottom panel:** tabs under the sidebar and main panel.
+  - **Logs** is always there: a running log of every request sent,
+    connection events and script output. Turn on **Trace** to log full
+    requests and responses (headers, params and body) instead of just the
+    status line. Click **Clear** to empty the log.
+  - A collection run opens in a **Runner** tab, and **⚙ → Diagnostics** in a
+    **Diagnostics** tab. Close either with the **×** on its tab.
+  - The panel starts collapsed; click the arrow on its header to expand or
+    collapse it. Drag its top edge to change its height.
+- **Manage** (environments) and **Import** open in a panel over the right
+  edge of the window. Press **Escape**, or click outside it, to close it.
 
 ---
 
@@ -165,9 +177,14 @@ it has content. Click a tab again to close it.
    ancr sets a matching `Content-Type` header for you.
 5. Click **Send**.
 
-The response shows the status, time taken, size and body. Very large
-responses (over about 500 KB) show a preview first, with a button to load
-the full response.
+The response shows the status, time taken and size, then four tabs:
+**Body**, **Headers**, **Tests** (with how many passed) and **Timing**. Very
+large responses (over about 500 KB) show a preview of the body first, with a
+button to load the full response.
+
+The request and the response share the main panel. Drag the line between
+them to give either more room, and click **Side by side** (or **Stacked**)
+to put the response beside the request or under it. ancr remembers both.
 
 ### GraphQL
 
@@ -289,7 +306,7 @@ Put `.not` before any check to reverse it, e.g.
   `.timings`, and `.json()` to parse the body.
 - `console.log(...)`: output appears in the **Logs** panel.
 
-Test results appear below the response as a pass/fail list.
+Test results appear on the response's **Tests** tab as a pass/fail list.
 
 **Scripts run in a sandbox.** Each script runs in its own small JavaScript
 engine, separate from the app. It can use the `ancr` object and `console`,
@@ -415,6 +432,9 @@ fully or changes nothing.
 
 ## Settings menu (⚙)
 
+- **Theme:** **System** (the default) follows your computer's light or dark
+  setting and switches when it does. **Dark** and **Light** keep ancr in one
+  theme. Your choice is remembered.
 - **Export workspace… / Import workspace…:** see
   [Sharing your work](#sharing-your-work).
 - **Reload:** reloads the window.
@@ -424,7 +444,7 @@ fully or changes nothing.
 - **Diagnostics:** shows the ancr version and system details, and any crash
   reports. Crash reports stay on your computer and are never sent anywhere.
   You can open their folder or clear them from here.
-- **Help:** opens this guide inside ancr, which works offline. **Open the
+- **Help:** opens this guide inside ancr, over the right side of the window (like **?** on the activity bar). It works offline. **Open the
   online guide** at the top opens the same guide, for your version, in your
   browser; each release publishes its guide at
   [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases).
