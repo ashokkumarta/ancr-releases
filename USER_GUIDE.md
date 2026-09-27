@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.1.4**
+**User Guide · version 0.1.5**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.1.4.exe`, from
+1. Download the installer, `ancr Setup 0.1.5.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -152,7 +152,8 @@ give it a name. The protocol is fixed once the request is created.
 The toolbar above a request shows its name, where it lives, and buttons to
 **undo**, **redo**, **rename** and **delete**. Click the name to rename it
 in place. A dot next to the name means you have unsaved changes; click
-**Save** to keep them.
+**Save** to keep them. If you open something else, or close ancr, while
+changes are unsaved, ancr asks whether to save them first.
 
 The request tabs are **Params**, **Auth**, **Headers**, a body tab
 (**Body**, **Query** or **Message**, depending on the protocol),
