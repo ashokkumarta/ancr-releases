@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.1.6**
+**User Guide · version 0.2.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.1.6.exe`, from
+1. Download the installer, `ancr Setup 0.2.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -68,7 +68,7 @@ To keep your work, export your workspace first (see
 The first time ancr opens, a short welcome screen introduces its main
 features. Dismiss it to start working. It won't appear again.
 
-ancr remembers the request you had open and reopens it the next time you
+ancr remembers the tabs you had open and reopens them the next time you
 start the app.
 
 ## The main window
@@ -88,9 +88,9 @@ start the app.
 - **Sidebar:** the chosen section's collections. Drag its right edge to make
   it wider or narrower. ancr remembers the section, the width and whether
   the sidebar is hidden.
-- **Main panel:** whatever you've selected. That can be a request and its
-  response, a WebSocket connection, an MCP server, or the details of a
-  collection or folder.
+- **Main panel:** what you've opened, one tab each (see [Tabs](#tabs)).
+  That can be a request and its response, a WebSocket connection, an MCP
+  server, or the details of a collection or folder.
 - **Bottom panel:** tabs under the sidebar and main panel.
   - **Logs** is always there: a running log of every request sent,
     connection events and script output. Turn on **Trace** to log full
@@ -102,6 +102,26 @@ start the app.
     collapse it. Drag its top edge to change its height.
 - **Manage** (environments) and **Import** open in a panel over the right
   edge of the window. Press **Escape**, or click outside it, to close it.
+
+### Tabs
+
+Everything you open gets a tab above the main panel, showing its protocol,
+its name and, when there are unsaved changes, a dot.
+
+- **Preview tabs:** a single click in the sidebar opens the item in a
+  *preview* tab (its name in italics), which the next item you click
+  replaces, so browsing doesn't pile up tabs. A tab is kept once you edit
+  it, send it or connect it, or when you double-click the tab. New requests
+  and connections, and cURL imports, open in kept tabs.
+- **Switching:** click a tab, or use the arrow keys once a tab has focus.
+  Each tab keeps its own edits and response, and a WebSocket or MCP
+  connection keeps running while its tab is in the background.
+- **Closing:** click **×** on a tab, middle-click it, or press **Delete**
+  while it has focus. Closing a tab closes its connection. If the tab has
+  unsaved changes, ancr asks whether to save them first.
+- **Reordering:** drag a tab to a new place.
+
+Deleting an item closes its tab, and renaming it renames the tab.
 
 ---
 
@@ -153,8 +173,8 @@ give it a name. The protocol is fixed once the request is created.
 The toolbar above a request shows its name, where it lives, and buttons to
 **undo**, **redo**, **rename** and **delete**. Click the name to rename it
 in place. A dot next to the name means you have unsaved changes; click
-**Save** to keep them. If you open something else, or close ancr, while
-changes are unsaved, ancr asks whether to save them first.
+**Save** to keep them. If you close the tab, or close ancr, while changes
+are unsaved, ancr asks whether to save them first.
 
 The request tabs are **Params**, **Auth**, **Headers**, a body tab
 (**Body**, **Query** or **Message**, depending on the protocol),
@@ -461,8 +481,8 @@ fully or changes nothing.
 The **History** section of the activity bar lists the HTTP and GraphQL
 requests you've sent, newest first and grouped by day, with each one's
 status and time. Search by name or URL at the top. Click an entry to open it
-as a copy of the request as it was sent, with its response; send it again,
-or change it first. Hover over an entry and click **×** to remove it, or
+in a preview tab, as a copy of the request as it was sent, with its
+response; send it again, or change it first. Hover over an entry and click **×** to remove it, or
 click **Clear** to remove them all.
 
 **Settings** at the top of History has:
