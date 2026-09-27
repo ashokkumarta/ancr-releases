@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.2.0**
+**User Guide · version 0.3.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.2.0.exe`, from
+1. Download the installer, `ancr Setup 0.3.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -113,11 +113,12 @@ its name and, when there are unsaved changes, a dot.
   replaces, so browsing doesn't pile up tabs. A tab is kept once you edit
   it, send it or connect it, or when you double-click the tab. New requests
   and connections, and cURL imports, open in kept tabs.
-- **Switching:** click a tab, or use the arrow keys once a tab has focus.
+- **Switching:** click a tab, press `Ctrl+Tab` and `Ctrl+Shift+Tab`, or
+  use the arrow keys once a tab has focus.
   Each tab keeps its own edits and response, and a WebSocket or MCP
   connection keeps running while its tab is in the background.
-- **Closing:** click **×** on a tab, middle-click it, or press **Delete**
-  while it has focus. Closing a tab closes its connection. If the tab has
+- **Closing:** click **×** on a tab, middle-click it, press **Delete**
+  while it has focus, or press `Ctrl+W`. Closing a tab closes its connection. If the tab has
   unsaved changes, ancr asks whether to save them first.
 - **Reordering:** drag a tab to a new place.
 
@@ -461,7 +462,11 @@ fully or changes nothing.
 
 - **Theme:** **System** (the default) follows your computer's light or dark
   setting and switches when it does. **Dark** and **Light** keep ancr in one
-  theme. Your choice is remembered.
+  theme. **High contrast** is a black theme with white text and bright
+  colours, stronger borders and a thicker focus outline, for the most
+  legible text (WCAG AAA contrast). Your choice is remembered. Windows'
+  own high-contrast themes (Settings → Accessibility → Contrast themes)
+  work too: ancr then uses your system's colours.
 - **Export workspace… / Import workspace…:** see
   [Sharing your work](#sharing-your-work).
 - **Reload:** reloads the window.
@@ -475,6 +480,42 @@ fully or changes nothing.
   online guide** at the top opens the same guide, for your version, in your
   browser; each release publishes its guide at
   [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases).
+
+## Command palette and keyboard shortcuts
+
+Press `Ctrl+K` (**⌘K** on a Mac) to open the command palette. Type to
+search every command, and every saved request, WebSocket connection, MCP
+server, collection and folder, by name. The letters you type only need to
+appear in order, so *gtus* finds *Get users*. Use the arrow keys to pick a
+result, **Enter** to run or open it, and **Escape** to close the palette.
+Each command shows its shortcut, if it has one.
+
+The shortcuts work anywhere in the window, including while you're typing in
+a field or an editor. On a Mac, use **⌘** in place of **Ctrl** (Ctrl+Tab
+stays Ctrl+Tab).
+
+| Shortcut | Command |
+|---|---|
+| `Ctrl+K` or `Ctrl+Shift+P` | Show all commands |
+| `Ctrl+Enter` | Send the open request |
+| `Ctrl+S` | Save the open request, connection or server |
+| `Ctrl+N` | New request |
+| `Ctrl+W` | Close the tab |
+| `Ctrl+Tab` or `Ctrl+PageDown` | Next tab |
+| `Ctrl+Shift+Tab` or `Ctrl+PageUp` | Previous tab |
+| `Ctrl+B` | Show or hide the sidebar |
+| `Ctrl+J` | Show or hide the bottom panel |
+| `Ctrl+Shift+H` | Show History |
+| `Ctrl+=` | Zoom in |
+| `Ctrl+-` | Zoom out |
+| `Ctrl+0` | Actual size |
+| `F11` | Full screen |
+| `F1` | This guide |
+
+The palette also has commands without shortcuts: closing other or all tabs,
+keeping a preview tab, showing each sidebar section, managing environments,
+importing and exporting, clearing the logs or switching trace mode, the
+themes, and Diagnostics.
 
 ## History
 
