@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.1.5**
+**User Guide · version 0.1.6**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.1.5.exe`, from
+1. Download the installer, `ancr Setup 0.1.6.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -80,6 +80,7 @@ start the app.
   - **API:** saved HTTP, GraphQL, SSE and gRPC requests.
   - **WebSocket:** saved WebSocket connections.
   - **MCP:** saved MCP servers.
+  - **History:** the requests you've sent (see [History](#history)).
 
   Click the section already shown to hide the sidebar, and any section to
   show it again. At the bottom, **{ }** opens the environments and **?** this
@@ -182,6 +183,11 @@ The response shows the status, time taken and size, then four tabs:
 **Body**, **Headers**, **Tests** (with how many passed) and **Timing**. Very
 large responses (over about 500 KB) show a preview of the body first, with a
 button to load the full response.
+
+**Timing** shows where the time went: **DNS** (looking up the host name),
+**Connect**, **TLS** (the secure handshake), **Waiting** (from sending the
+request to the first byte of the response) and **Download**. A request that
+reused an open connection has no DNS, connect or TLS time.
 
 The request and the response share the main panel. Drag the line between
 them to give either more room, and click **Side by side** (or **Stacked**)
@@ -449,6 +455,27 @@ fully or changes nothing.
   online guide** at the top opens the same guide, for your version, in your
   browser; each release publishes its guide at
   [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases).
+
+## History
+
+The **History** section of the activity bar lists the HTTP and GraphQL
+requests you've sent, newest first and grouped by day, with each one's
+status and time. Search by name or URL at the top. Click an entry to open it
+as a copy of the request as it was sent, with its response; send it again,
+or change it first. Hover over an entry and click **×** to remove it, or
+click **Clear** to remove them all.
+
+**Settings** at the top of History has:
+
+- **Record sent requests:** turn history on or off (it's on by default).
+- **Keep the last … requests:** 500 by default; older ones are removed.
+- **Store responses:** with this off, only each response's status, time and
+  size are kept, not its body or headers.
+
+Requests are kept as written, so `{{variables}}` stay as placeholders and
+the values from your environments (which can include tokens) aren't stored.
+Collection runs aren't recorded. Like everything else, history stays on your
+computer.
 
 ## Your data and privacy
 
