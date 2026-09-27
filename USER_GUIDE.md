@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.3.0**
+**User Guide · version 0.3.1**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.3.0.exe`, from
+1. Download the installer, `ancr Setup 0.3.1.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -326,13 +326,34 @@ Put `.not` before any check to reverse it, e.g.
 
 **Also available:**
 
-- `ancr.variables`, also available as `ancr.environment`: set a value here
-  to create a variable for this run.
+- `ancr.variables`: the active environment's values, as strings, for this
+  request. Set a value here to use it as `{{name}}` in this request (its
+  test script sees it too). It lasts only for this request.
+- `ancr.environment`: the active environment itself. A value set here is
+  used by this request too, and is **saved to the environment** afterwards,
+  so later requests use it, including the next ones in a collection run.
+  `delete ancr.environment.name` removes one. The Logs panel says which
+  values changed (never the values themselves), and a collection run's
+  summary lists them. With **No Environment** selected there's nowhere to
+  save them, so nothing is saved and the log says so.
+
+  ```js
+  // Test script of a login request: keep the token for the requests after it.
+  ancr.environment.token = ancr.response.json().token;
+  ```
 - `ancr.request`: the request being sent (read-only: changing it doesn't
   change what's sent; set variables instead).
-- `ancr.response`, in test scripts. It has `.status`, `.headers`, `.body`,
-  `.timings`, and `.json()` to parse the body.
-- `console.log(...)`: output appears in the **Logs** panel.
+- `ancr.response`, in test scripts. It has `.status`, `.statusText`,
+  `.headers` (names in lower case, e.g. `headers["content-type"]`), `.body`,
+  `.sizeBytes`, `.timings` and `.json()` to parse the body (it throws if
+  the body isn't JSON). `.timings.durationMs` is the total time, and
+  `.timings.phases` has the breakdown the Timing tab shows: `dnsMs`,
+  `connectMs`, `tlsMs`, `waitMs`, `downloadMs` and `reusedConnection`.
+- `console.log(...)`, and `console.info`, `console.warn` and
+  `console.error`: output appears in the **Logs** panel.
+
+The [sample workspace](#trying-the-sample-workspace) has examples of all of
+these, in its **Pre-request scripts** and **Scripts & tests** folders.
 
 Test results appear on the response's **Tests** tab as a pass/fail list.
 
@@ -516,6 +537,22 @@ The palette also has commands without shortcuts: closing other or all tabs,
 keeping a preview tab, showing each sidebar section, managing environments,
 importing and exporting, clearing the logs or switching trace mode, the
 themes, and Diagnostics.
+
+## Trying the sample workspace
+
+The sample workspace is a ready-made set of requests, connections and
+servers covering everything ancr can do, with test scripts on every HTTP
+and GraphQL request. Every request goes to a free public test service, so
+it works straight away, with no sign-up or keys.
+
+1. Download
+   [ancr-sample-workspace.ancr.json](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/ancr-sample-workspace.ancr.json).
+   ([What's inside](https://github.com/ashokkumarta/ancr-releases/tree/main/samples).)
+2. Open **⚙ → Import workspace…** and choose the file.
+3. In the preview, tick **Import scripts**, then click **Import**.
+4. Pick **Sample — httpbin** in the environment switcher.
+
+It's added alongside your own work; nothing you already have changes.
 
 ## History
 
