@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.3.1**
+**User Guide · version 0.3.2**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -33,7 +33,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.3.1.exe`, from
+1. Download the installer, `ancr Setup 0.3.2.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows *"Windows protected your PC"*, click **More info**, then
@@ -179,8 +179,26 @@ are unsaved, ancr asks whether to save them first.
 
 The request tabs are **Params**, **Auth**, **Headers**, a body tab
 (**Body**, **Query** or **Message**, depending on the protocol),
-**Pre-request Script**, **Tests** and **`</> Code`**. A dot on a tab means
-it has content. Click a tab again to close it.
+**Settings**, **Pre-request Script**, **Tests** and **`</> Code`**. A dot on
+a tab means it has content. Click a tab again to close it.
+
+### TLS certificates
+
+ancr checks the server's TLS certificate for every `https://` and `wss://`
+connection, and refuses a server whose certificate is self-signed, expired
+or issued for another host. The error in **Logs** says why, for example
+`self-signed certificate (DEPTH_ZERO_SELF_SIGNED_CERT)`.
+
+To test a server like that, untick **Verify TLS certificates**: on the
+**Settings** tab of a request, the **Settings** tab of a WebSocket
+connection, or the **Headers / TLS** tab of an MCP server over HTTP. A
+warning shows while it's off, and a dot marks the tab. The connection is
+still encrypted, but ancr no longer checks who it's talking to, so only do
+this for servers you control, and save it only where you need it.
+
+Importing a cURL command with `-k` or `--insecure`, or a Postman request
+with SSL certificate verification off, turns the check off too, and the
+**`</> Code`** snippets include each language's equivalent.
 
 ### HTTP
 
