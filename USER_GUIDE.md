@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.6.0**
+**User Guide · version 0.7.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.6.0.exe`, from
+1. Download the installer, `ancr Setup 0.7.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -132,6 +132,29 @@ Deleting an item closes its tab, and renaming it renames the tab.
 
 ---
 
+## Workspaces
+
+A **workspace** holds everything you work on: its collections, folders,
+requests and connections, its environments, its **History**, cookies and
+OAuth 2.0 tokens, its response examples, the tabs you had open and this
+session's logs. ancr starts with one, **My Workspace**, and you can add
+more, for example one per project or client. One is open at a time, and
+ancr reopens the last one you used.
+
+The workspace list is in the header, next to the environments:
+
+- **Switch** by choosing another workspace. Its tabs come back as you left
+  them. If a tab has unsaved changes, ancr asks whether to save them first.
+- **⋯ → New workspace…** makes an empty one and opens it.
+- **⋯ → Rename workspace…** renames the open one.
+- **⋯ → Delete workspace…** deletes the open one, with everything in it,
+  and opens another. If it's the only workspace, it's emptied instead and
+  gets the name **My Workspace** back.
+
+Settings (the theme, **Network…**, History limits) are the same for every
+workspace. When you import an ancr export, you choose whether it goes into
+the open workspace or a new one.
+
 ## Collections and folders
 
 Every saved request, connection and server lives in a **collection**.
@@ -220,9 +243,15 @@ request and connection:
   `NO_PROXY`. Choose **This proxy** to enter one (`http://proxy.example.com:3128`),
   with a username and password if it needs them, and the hosts to reach
   directly under **No proxy for** (`localhost, .example.com`: a host covers
-  its subdomains). **No proxy** turns it off. HTTP, GraphQL, SSE, WebSocket,
-  gRPC and MCP requests go through the proxy; messaging brokers are reached
-  directly.
+  its subdomains). **The system's proxy settings** uses the proxy your
+  operating system is set up with (on Windows, **Settings → Network &
+  internet → Proxy**), including a setup script (PAC) or automatic
+  detection, which is how most company networks set it: each request asks
+  the system which proxy its address goes through. **No proxy** turns it
+  off. HTTP, GraphQL, SSE, WebSocket,
+  gRPC and MCP requests go through the proxy, and so do MQTT over WebSocket
+  (`ws://`, `wss://`) and Socket.IO; Kafka, AMQP, NATS and MQTT over TCP
+  connect directly.
 - **Certificate authorities.** Add a CA certificate (PEM) your company signs
   its servers' certificates with, and ancr trusts it as well as the system's,
   so you don't have to turn **Verify TLS certificates** off.
@@ -369,6 +398,47 @@ clearly above the response.
 
 Enter the stream URL and click **Connect**. Events appear live as they
 arrive. Click **Disconnect** to close the stream.
+
+#### Streaming an AI API's answer
+
+AI APIs (OpenAI, Anthropic, and the many compatible with OpenAI's, such as
+local model servers, and Gemini) stream their answers as events in reply to
+a POST. To test one, create an **SSE** request, choose **POST**, and on the
+**Body** tab write the request as **JSON**, with streaming turned on:
+
+```json
+{
+  "model": "gpt-4o-mini",
+  "stream": true,
+  "messages": [{ "role": "user", "content": "Say hello" }]
+}
+```
+
+Put the API key where the API wants it: **Auth → Bearer Token** for
+OpenAI, or an `x-api-key` header (and `anthropic-version`) for Anthropic.
+Click **Connect**: above the events, **Answer** shows the text put together
+as it arrives, and which API's format it's in. A request without
+`"stream": true` gets the whole answer at once; it shows the same way. If
+the API refuses the request (a wrong key, an unknown model), the error
+shows the API's own explanation.
+
+#### Tokens and cost
+
+When an AI API's answer says how many tokens it used (OpenAI, Anthropic
+and Gemini all do), ancr shows them under the answer: input, output and
+total, with the model. For OpenAI's streams, ask for them with
+`"stream_options": { "include_usage": true }` in the body. It works for a
+plain **HTTP** request to an AI API too, under the response's status.
+
+The **cost** is shown when the model is in the price table, **⚙ → AI model
+prices…**. It starts with the main OpenAI, Anthropic and Gemini models, at
+the prices their price pages gave on the date shown there; prices change,
+so check yours. Edit a price, **+ Add model** for any other (a local model,
+another provider), or remove one, then **Save**; **Use the starter prices**
+goes back to the table ancr came with. A price covers its model's dated
+versions too (`claude-haiku-4-5` covers `claude-haiku-4-5-20251001`), but
+not other models whose names start the same way. Discounts for prompt
+caching and batches aren't counted.
 
 ### SOAP
 
