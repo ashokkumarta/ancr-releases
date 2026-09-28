@@ -11,7 +11,9 @@ messaging brokers, which you start with Docker.
 ### Importing it
 
 1. Download [`ancr-sample-workspace.ancr.json`](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/ancr-sample-workspace.ancr.json).
-2. In ancr, open **⚙ → Import workspace…** and choose the file.
+2. In ancr, open **⚙ → Import workspace…** and choose the file. To keep it
+   apart from your own work, choose **Into a new workspace**: switch between
+   them from the workspace list in the header.
 3. In the preview, tick **Import scripts**. Every HTTP and GraphQL sample
    has test scripts, and some have pre-request scripts; they're left out
    unless you tick this.
@@ -30,6 +32,7 @@ changed.
 | API       | **Sample — Server-Sent Events** (3)    | Named events with ids, and the same with tests on what arrives; a busy live stream (Wikimedia recent edits).                                                      |
 | API       | **Sample — gRPC** (10)                  | See the breakdown below.                                                                                                 |
 | API | **Sample — SOAP** (3) | See the breakdown below. |
+| API | **Sample — AI APIs** (4) | See the breakdown below. |
 | WebSocket | **Sample — WebSocket** (5)             | Echo servers, plus connections with custom headers and a bearer token, and one whose URL is a `{{variable}}`, with tests on what comes back. Connect, send a message, and watch it echo back.  |
 | MCP       | **Sample — MCP** (3)                   | See the breakdown below.                                                                                                 |
 | Messaging | **Sample — Messaging** (9 connections) | MQTT, Kafka, Socket.IO, AMQP and NATS: five public test broker connections that work straight away (one with tests on what arrives), and four local ones. See below. |
@@ -104,6 +107,21 @@ changed.
   calculator service
 - a fault (dividing by zero), shown with its code and reason
 
+**Sample — AI APIs** covers:
+
+- streaming an answer from OpenAI's chat completions and from Anthropic's
+  Messages API: an SSE request that POSTs a JSON body, with tests that
+  pass once the stream has ended: **Answer** shows the text as it arrives, with the tokens used and their cost
+- the same OpenAI request, not streamed, as a plain HTTP request, which shows its tokens and cost under the response
+- a local model through Ollama's OpenAI-compatible API, which needs no key
+  (`ollama run llama3.2` first)
+
+They need your own API keys: set `openaiApiKey` and `anthropicApiKey` in
+the environment (they're empty in the sample, and exports leave keys out).
+`openaiBaseUrl`, `anthropicBaseUrl` and `localModelUrl` point the same
+requests at another compatible service. Without a key, the error shows the
+API's own explanation.
+
 **Sample — MCP** covers:
 
 - the reference "Everything" server, which has tools, resources and
@@ -166,6 +184,13 @@ to a different server.
   open **⚙ → Network…**, add a client certificate for host
   `client.badssl.com` (PEM, choosing that file as both the certificate and
   the key, with the passphrase), **Save**, and send it again: 200.
+- **AI answers, tokens and cost:** set `openaiApiKey` in the environment
+  and connect **Sample — AI APIs → OpenAI: stream a chat completion**. The
+  answer appears as it's written, then the tokens it used and what they
+  cost, from **⚙ → AI model prices…** (add a model there to price it).
+- **Workspaces:** make a second one from the header's workspace list
+  (**⋯ → New workspace…**) and switch back: each keeps its own requests,
+  environments, history and open tabs.
 - **Save a response as an example:** send any request, click **Save as
   example**, and find it under the request in the sidebar.
 - **A SOAP service from its WSDL:** open **Import → WSDL (SOAP)** and paste
@@ -173,7 +198,8 @@ to a different server.
   four operations for SOAP 1.1 and 1.2, each with its envelope ready to
   fill in.
 - **A proxy:** **⚙ → Network…** uses the proxy in `HTTPS_PROXY` if one is
-  set, or one you enter there.
+  set, the system's proxy settings (a PAC script included), or one you
+  enter there.
 
 ### Good to know
 
@@ -184,9 +210,10 @@ to a different server.
   aren't real accounts.
 - **Scripts & tests → "A failing test (on purpose)"** is meant to fail, so
   you can see what a failed test looks like. **Authentication → Client
-  certificate** fails too until you add its certificate, and the two file
-  requests until you choose the file. Every other test passes against both
-  environments.
+  certificate** fails too until you add its certificate, the two file
+  requests until you choose the file, and **Sample — AI APIs** until you
+  give it your API keys (or run Ollama for the local model). Every other
+  test passes against both environments.
 - Scripts run for HTTP and GraphQL requests, so the SSE, gRPC, WebSocket
   and MCP samples have none.
 - A value a script sets in `ancr.variables` is used by that request only.
