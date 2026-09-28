@@ -27,7 +27,7 @@ changed.
 
 | Section   | Collection                             | What it shows                                                                                                            |
 | --------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| API       | **Sample — HTTP** (54 requests)        | See the breakdown below.                                                                                                 |
+| API       | **Sample — HTTP** (56 requests)        | See the breakdown below.                                                                                                 |
 | API       | **Sample — GraphQL** (7)               | See the breakdown below.                                                                                                 |
 | API       | **Sample — Server-Sent Events** (3)    | Named events with ids, and the same with tests on what arrives; a busy live stream (Wikimedia recent edits).                                                      |
 | API       | **Sample — gRPC** (10)                  | See the breakdown below.                                                                                                 |
@@ -47,6 +47,14 @@ changed.
   sending [`sample-upload.txt`](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/sample-upload.txt).
   A file's path is kept as it was, so after importing, download it (or use
   any file of yours) and choose it on the request's **Body** tab
+- **Data-driven runs (Pro):** the folder **Data-driven run** looks up a
+  user by `{{userId}}` and checks their `{{username}}`, both from
+  [`sample-users.csv`](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/sample-users.csv)
+  (five rows). With a Pro licence, click the table icon on the folder,
+  choose the file and run it: each row is one iteration, and its tests read
+  the row as `ancr.iteration.data` (one written for Postman uses
+  `pm.iterationData`). Run once without data, it fails, since `{{userId}}`
+  has no value
 - **Response examples:** **REST CRUD → Get one post** keeps two, *Found*
   and *Not found*, under it in the sidebar: click the arrow beside it
 - Basic, Bearer and API-key auth, sent as a header or in the query string;

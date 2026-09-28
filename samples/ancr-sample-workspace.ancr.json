@@ -1307,6 +1307,48 @@
               }
             }
           ]
+        },
+        {
+          "name": "Data-driven run (Pro: run it with sample-users.csv)",
+          "folders": [],
+          "items": [
+            {
+              "type": "request",
+              "name": "Look up the user from the row",
+              "config": {
+                "method": "GET",
+                "url": "{{jsonUrl}}/users/{{userId}}",
+                "params": [],
+                "headers": [],
+                "body": {
+                  "mode": "none"
+                },
+                "auth": {
+                  "type": "none"
+                },
+                "protocol": "http",
+                "testScript": "ancr.test(\"user \" + ancr.iteration.data.userId + \" is \" + ancr.iteration.data.username, () => {\n  ancr.expect(ancr.response.status).toBe(200);\n  ancr.expect(ancr.response.json().username).toBe(ancr.iteration.data.username);\n});\nancr.test(\"pass \" + (ancr.iteration.index + 1) + \" of \" + ancr.iteration.count, () => {\n  ancr.expect(ancr.iteration.index).toBeLessThan(ancr.iteration.count);\n});"
+              }
+            },
+            {
+              "type": "request",
+              "name": "The same, written for Postman (pm.iterationData)",
+              "config": {
+                "method": "GET",
+                "url": "{{jsonUrl}}/users/{{userId}}",
+                "params": [],
+                "headers": [],
+                "body": {
+                  "mode": "none"
+                },
+                "auth": {
+                  "type": "none"
+                },
+                "protocol": "http",
+                "testScript": "pm.test(\"username matches the data file\", () => {\n  pm.expect(pm.response.json().username).to.equal(pm.iterationData.get(\"username\"));\n});"
+              }
+            }
+          ]
         }
       ],
       "items": []

@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.7.0**
+**User Guide · version 0.8.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.7.0.exe`, from
+1. Download the installer, `ancr Setup 0.8.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -50,6 +50,16 @@ ancr checks for a new version each time it starts. When one is available,
 it downloads in the background and a banner offers **Restart to update**.
 You can also check at any time with **⚙ → Check for Updates**. If you're
 offline, the check just doesn't happen; it never gets in your way.
+
+**⚙ → Automatic updates** (on by default) turns this off: ancr then doesn't
+check when it starts, and **Check for Updates** tells you about a new version
+and downloads it only if you click **Download**.
+
+With a perpetual [a.n.c.r Pro](#ancr-pro) licence, automatic updates turn
+off by themselves once the licence's updates have ended, and stay off: a
+newer version wouldn't run Pro, and the one you have keeps working with it.
+You can still check and download by hand; the banner says the new version
+won't run Pro. A renewed licence turns them back on as you had them.
 
 If you have version 0.1.0, it can't update itself: download the latest
 installer once from
@@ -734,6 +744,39 @@ report:
 - requests that failed to send
 - total time
 
+### Running with data (Pro)
+
+With an [a.n.c.r Pro](#ancr-pro) licence, the **table** icon next to ▶ Run
+(**Run this collection with data**, or folder) runs every request once per
+row of test data, or a number of times:
+
+- **A data file:** click **Choose data file…** and pick a CSV file (a header
+  row of names, then a row per pass; commas or semicolons, and values in
+  quotes where they have a comma or a line break) or a JSON file (an array
+  of objects). The first rows are shown before you run.
+- **Repeat:** the requests run the number of **Times** you set, with no data.
+- **Delay between requests** waits that many milliseconds between one
+  request and the next, and **Stop at the first failure** ends the run at
+  the first request that fails to send or fails a test. **Stop** ends a run
+  part-way.
+
+In each pass, the row's values are `{{variables}}` (above the environment's
+values, and never saved to it), and scripts read the pass as
+`ancr.iteration` (`index` from 0, `count` and `data`); Postman scripts'
+`pm.iterationData.get(name)` and `pm.info.iteration` work too. What scripts
+set in `ancr.environment` carries on to the next pass and is saved to the
+environment afterwards, as in a normal run.
+
+The results show each iteration with its row's values and each request's
+outcome. **Save JUnit XML…** saves them for a CI system (a test suite per
+request per iteration) and **Save CSV…** for a spreadsheet (a row per request
+per iteration, with a column per data value). Both, and the runner, show
+who the licence is for and its id ("Licensed to …"): the JUnit file as each
+suite's properties, the CSV file as a last line starting with `#`.
+
+Without a licence the icon still opens the runner, which explains what it
+does and how to add a licence.
+
 ### Running a collection in CI
 
 To run the same tests in a CI pipeline, without ancr, use `jt`, the
@@ -876,6 +919,8 @@ fully or changes nothing.
   work too: ancr then uses your system's colours.
 - **Cookies…:** the cookies ancr keeps between requests; see
   [Cookies](#cookies).
+- **Licence…:** add or remove an a.n.c.r Pro licence; see
+  [a.n.c.r Pro](#ancr-pro).
 - **Export workspace… / Import workspace…:** see
   [Sharing your work](#sharing-your-work).
 - **Reload:** reloads the window.
@@ -885,7 +930,11 @@ fully or changes nothing.
 - **Diagnostics:** shows the ancr version and system details, and any crash
   reports. Crash reports stay on your computer and are never sent anywhere.
   You can open their folder or clear them from here.
-- **Help:** opens this guide inside ancr, over the right side of the window (like **?** on the activity bar). It works offline. **Open the
+- **Help:** opens this guide inside ancr, over the right side of the window (like **?** on the activity bar). It works offline.
+  **Search the guide** at the top (or **Ctrl+F**, **⌘F** on a Mac, while
+  it's open) finds text in it: every match is highlighted, **Enter** and
+  **↓** go to the next, **Shift+Enter** and **↑** to the previous, and
+  **Esc** clears the search. **Open the
   online guide** at the top opens the same guide, for your version, in your
   browser; each release publishes its guide at
   [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases).
@@ -964,11 +1013,44 @@ the values from your environments (which can include tokens) aren't stored.
 Collection runs aren't recorded. Like everything else, history stays on your
 computer.
 
+## a.n.c.r Pro
+
+a.n.c.r is free for any use, and everything described above stays free.
+**Pro** adds what runs automatically and repeatedly, starting with
+[data-driven runs](#running-with-data-pro) of a collection. Where the app
+offers a Pro feature, it's marked **Pro**.
+
+To turn Pro on, open **⚙ → Licence…** and paste your licence, or choose
+**Choose licence file…** and pick the `.ancr-licence` file you were sent.
+The panel then shows who it's for, its term, what it includes and when
+its updates end. **Remove licence** takes it off this computer.
+
+A licence is one of three kinds:
+
+- **For an organisation:** works on any of its computers, for the number of
+  people (seats) it was bought for.
+- **For one person:** when you add it, enter the email address it was issued
+  to, to activate it.
+- **For one computer:** works only on the computer it was issued for. To buy
+  one, send the **machine ID** shown in **⚙ → Licence…** (click **Copy**). The
+  ID comes from your operating system's own id for the computer, as a hash,
+  and changes if the operating system is reinstalled.
+
+- The licence is checked on your computer, with its signature; nothing is
+  sent anywhere, and there's no account.
+- **Perpetual** licences keep working for good with the versions released
+  until their updates end; a newer version asks for a renewed licence.
+  **Subscription** and **trial** licences end on their end date.
+- If a licence isn't accepted, the panel says why (for example, it's for
+  another product, it has ended, this version is newer than its updates, or
+  it has been withdrawn).
+
 ## Your data and privacy
 
 - Everything you create is stored only on your computer.
 - ancr has no telemetry and never sends your data anywhere. It connects
   only to the APIs you send requests to, and to check for ancr updates.
+- A Pro licence is checked on your computer; ancr never sends it anywhere.
 - To back up your work or move it to another computer, use
   **⚙ → Export workspace…**, then **Import workspace…** on the other
   computer. If you want the backup to include passwords and tokens, turn on
