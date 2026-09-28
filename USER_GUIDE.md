@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.4.1**
+**User Guide · version 0.5.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.4.1.exe`, from
+1. Download the installer, `ancr Setup 0.5.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -80,7 +80,7 @@ start the app.
   use), **Manage** to edit environments, and the **⚙** settings menu.
 - **Activity bar** (the icon strip on the far left): picks what the sidebar
   shows, one section at a time:
-  - **API:** saved HTTP, GraphQL, SSE and gRPC requests.
+  - **API:** saved HTTP, GraphQL, SSE, gRPC and SOAP requests.
   - **WebSocket:** saved WebSocket connections.
   - **MCP:** saved MCP servers.
   - **Messaging:** saved broker connections (MQTT, Kafka, Socket.IO, AMQP,
@@ -210,6 +210,27 @@ Importing a cURL command with `-k` or `--insecure`, or a Postman request
 with SSL certificate verification off, turns the check off too, and the
 **`</> Code`** snippets include each language's equivalent.
 
+### Cookies
+
+ancr keeps cookies the way a browser does. When a response sets a cookie,
+it's kept, and sent with later requests to the same site: log in once and
+the requests after it are logged in too, including in a collection run.
+A cookie goes only to its own domain (and its subdomains, if it says so)
+and path, a **Secure** one only over `https://` (or to your own machine),
+and it's dropped when it expires or the server clears it. Redirects keep
+cookies too, so a cookie set by a login's redirect isn't lost. A cookie with
+no expiry is kept until you delete it.
+
+The response's **Cookies** tab shows what that response set. To see every
+kept cookie, open **Settings (⚙) → Cookies…** (or **Cookies: Manage** in the
+command palette): they're listed by domain, and you can add, edit or delete
+one, or delete all of a domain's. Each workspace has its own cookies.
+
+To send a request without them, untick **Use the cookie jar** on its
+**Settings** tab: it then sends no kept cookies and keeps none it's given.
+A `Cookie` header you add yourself is always sent; for a cookie in both,
+yours wins.
+
 ### HTTP
 
 1. Pick a method (GET, POST, PUT, PATCH, DELETE, HEAD or OPTIONS) and enter
@@ -221,6 +242,9 @@ with SSL certificate verification off, turns the check off too, and the
    - **Basic Auth** (username and password)
    - **Bearer Token**
    - **API Key**, sent as a header or a query parameter
+   - **Digest Auth** (username and password): ancr answers the server's
+     Digest challenge and sends the request again
+   - **OAuth 2.0**: see [OAuth 2.0](#oauth-20) below
 4. Choose a **Body**:
    - **JSON** or **Raw** text
    - **x-www-form-urlencoded** or **Form Data** (key/value rows)
@@ -229,10 +253,19 @@ with SSL certificate verification off, turns the check off too, and the
 
 5. Click **Send**.
 
-The response shows the status, time taken and size, then four tabs:
-**Body**, **Headers**, **Tests** (with how many passed) and **Timing**. Very
-large responses (over about 500 KB) show a preview of the body first, with a
-button to load the full response.
+The response shows the status, time taken and size, then five tabs:
+**Body**, **Headers**, **Tests** (with how many passed), **Cookies** and
+**Timing**. Very large responses (over about 500 KB) show a preview of the
+body first, with a button to load the full response.
+
+**Body** shows JSON and XML **Pretty** (formatted and coloured) or **Raw** (as
+received), and an HTML page as a **Preview** too. The preview runs no
+scripts and loads nothing from the network, so it's safe to look at any page.
+**Search** marks every match (**Enter** and **Shift+Enter**, or the arrows,
+step through them), and **Copy** copies the whole body.
+
+**Cookies** lists the cookies the response set: name, value, domain, path,
+when they expire, and their flags (Secure, HttpOnly, SameSite).
 
 **Timing** shows where the time went: **DNS** (looking up the host name),
 **Connect**, **TLS** (the secure handshake), **Waiting** (from sending the
@@ -242,6 +275,37 @@ reused an open connection has no DNS, connect or TLS time.
 The request and the response share the main panel. Drag the line between
 them to give either more room, and click **Side by side** (or **Stacked**)
 to put the response beside the request or under it. ancr remembers both.
+
+### OAuth 2.0
+
+Pick **OAuth 2.0** on the **Auth** tab of an HTTP or GraphQL request, then a
+**Grant type**:
+
+- **Authorization code (with PKCE)**, for signing in as a user: fill in the
+  provider's **Authorization URL**, **Token URL** and **Client ID** (and
+  **Client secret**, unless it's a public client). When there's no token,
+  your browser opens the provider's sign-in page; after you sign in, it
+  sends you back to ancr on this computer (`http://127.0.0.1`, on a free
+  port, unless you give a **Redirect URI**, for a provider that only
+  accepts a registered one).
+- **Client credentials**, for one service calling another: the **Token URL**,
+  **Client ID** and **Client secret**.
+- **Password**, for older APIs that take a username and password.
+
+**Scope** and **Audience** are sent if you fill them in. The token goes in
+the `Authorization` header as `Bearer …` (change **Header prefix** if the
+API wants another word), or in the `access_token` query parameter.
+**Send the client ID and secret** chooses how they reach the token URL: as
+a Basic auth header (the usual way) or in the request body. Any field can
+use `{{variables}}`, so the client secret can live in your environment.
+
+ancr gets a token when you first send the request, keeps it, and uses it
+until it expires; then it uses the refresh token, if the provider gave one,
+or gets a new token. Requests with the same provider, client and scope share
+one token, so you sign in once. Under the settings, **Access token** shows
+the token and when it expires, with **Get new access token**, **Copy token**
+and **Clear token**. Tokens are kept with the workspace, never in the saved
+request, so they're not in exports.
 
 ### GraphQL
 
@@ -256,17 +320,55 @@ clearly above the response.
 Enter the stream URL and click **Connect**. Events appear live as they
 arrive. Click **Disconnect** to close the stream.
 
+### SOAP
+
+For a SOAP web service, create a **SOAP** request and enter the service's
+address. On the **Envelope** tab:
+
+- **SOAP version:** **1.1** sends the envelope as `text/xml` with a
+  `SOAPAction` header; **1.2** as `application/soap+xml`, with the action in
+  the content type.
+- **Action:** the operation's action URI, as the service's WSDL gives it
+  (`soapAction`). Some services need it; others ignore it.
+- The **envelope** itself, which starts from a template: put the operation
+  in its `Body`. `{{variables}}` work here too.
+
+ancr POSTs the envelope. The response body shows as formatted XML, and if
+the service answers with a **fault**, its code and reason (and detail) show
+above the response. A `Content-Type` or `SOAPAction` header you add yourself
+is sent as you wrote it. Code snippets, collection runs and History treat a
+SOAP request as the HTTP request it's sent as.
+
 ### gRPC
 
 1. Enter the server address, e.g. `localhost:50051`.
-2. In the **Message** tab, paste the service's `.proto` definition.
-3. Pick the service and method.
+2. In the **Message** tab, say where the service definitions come from:
+   - **Proto file:** paste the service's `.proto` definition (one file,
+     without imports).
+   - **Server reflection:** click **Load services from the server**, and
+     ancr asks the server itself, so you need no `.proto` file. The server
+     must have gRPC server reflection turned on (most frameworks have a
+     one-line switch for it). **Reload from the server** picks up changes.
+3. Pick the service and method. Streaming methods say which kind they are.
 4. Fill in the request message using the generated form.
 5. Leave **Use plaintext** on for local and development servers, or turn it
    off for servers that use TLS.
 
-The response shows the status code, time taken, the response message, and
-any metadata the server sent back.
+For a unary call, the response shows the status code, time taken, the
+response message, and any metadata the server sent back.
+
+**Streaming calls** show every message as it goes, **→ Sent** or
+**← Received**, and then how the call ended (its status code and name, with
+the server's headers and trailers):
+
+- **Server streaming:** **Send** sends the message and the replies arrive
+  one by one.
+- **Client streaming** and **bidirectional:** **Send** opens the call. Then
+  **Send message** sends the message in the form (edit it and send again as
+  often as you like), and **End** tells the server you're done. A
+  bidirectional call's replies arrive as they come; a client-streaming
+  call's one reply comes after **End**.
+- **Cancel** stops a call at any time.
 
 ---
 
@@ -353,10 +455,26 @@ _Staging_ and _Production_. Pick the active one from the switcher in the
 header, or **No Environment**. Click **Manage** to create, rename and delete
 environments and edit their variables.
 
-In HTTP and GraphQL requests, write `{{variableName}}` anywhere: the URL,
-params, headers, body, auth or GraphQL query. When you send, it's replaced
-with the value from the active environment. A variable with no value is left as-is, e.g. `{{typo}}`, so
-mistakes are easy to spot.
+In requests, write `{{variableName}}` anywhere: the URL, params, headers,
+body, auth or GraphQL query. When you send, it's replaced with the value
+from the active environment. A variable with no value is left as-is, e.g.
+`{{typo}}`, so mistakes are easy to spot.
+
+Connections use them too: a WebSocket, MCP or messaging connection's URL,
+headers, auth and settings when it connects, and what it sends while
+connected (WebSocket messages, MCP arguments, messaging subscriptions and
+publishes). The saved connection keeps the `{{variables}}`, so switching
+environments points it somewhere else.
+
+**Which variables are set** shows as you type. In the URL, params,
+headers, auth, body and SOAP envelope fields, and a connection's URL and
+messages, a `{{variable}}` the active environment sets is **green**, with a
+dotted underline, and one it doesn't set is **red**, with a wavy underline:
+it would be sent as written. Hover over the field to see each variable's
+value and where it comes from. Switch environments and the colours follow.
+Password fields aren't coloured, so their text stays hidden. A variable a
+pre-request script sets shows as red until then, since it only exists
+while the request runs.
 
 Scripts can also set variables for a single run (see below).
 
@@ -415,6 +533,11 @@ Put `.not` before any check to reverse it, e.g.
   ancr.environment.token = ancr.response.json().token;
   ```
 
+- `ancr.cookies`: the [kept cookies](#cookies) for this request's address.
+  `ancr.cookies.get("session")` gives a cookie's value, `.has(name)` says
+  whether there is one, `.toObject()` gives them all as `{ name: value }`,
+  and `.all()` as a list with each one's domain, path, expiry and flags. In
+  a test script it includes the cookies this response just set.
 - `ancr.request`: the request being sent (read-only: changing it doesn't
   change what's sent; set variables instead).
 - `ancr.response`, in test scripts. It has `.status`, `.statusText`,
@@ -430,6 +553,35 @@ The [sample workspace](#trying-the-sample-workspace) has examples of all of
 these, in its **Pre-request scripts** and **Scripts & tests** folders.
 
 Test results appear on the response's **Tests** tab as a pass/fail list.
+
+### Tests for connections
+
+WebSocket and messaging connections have a **Tests** tab too, and an SSE
+request's **Tests** tab works the same way. There, the script checks the
+messages the connection has sent and received so far, `ancr.messages`,
+oldest first. Each has:
+
+- `direction`: `"sent"` or `"received"`
+- `channel`: the topic, queue, subject or event name (messaging), or the
+  event's type (SSE)
+- `data`: the message as text, and `json()` to parse it
+- `at`: how many milliseconds after the connection opened it came
+- `key` and `headers`, for messaging protocols that have them
+
+```js
+ancr.test("an order is paid within 5 s", () => {
+  const paid = ancr.messages.find((m) => m.channel === "orders" && m.json().status === "paid");
+  ancr.expect(paid).toBeDefined();
+  ancr.expect(paid.at).toBeLessThan(5000);
+});
+```
+
+The tests run again as messages arrive, so the results (under the script,
+and as a summary on the other tabs) say how the connection is doing so far.
+**Run tests now** runs them at once. Only the newest 1,000 messages are
+checked, and a reconnect starts afresh. `ancr.request` and `ancr.variables`
+are there too; `ancr.response` isn't, since a connection has no single
+response.
 
 **Scripts run in a sandbox.** Each script runs in its own small JavaScript
 engine, separate from the app. It can use the `ancr` object and `console`,
@@ -454,6 +606,24 @@ report:
 - requests that failed to send
 - total time
 
+### Running a collection in CI
+
+To run the same tests in a CI pipeline, without ancr, use `jt`, the
+command-line client of jtaak, the open-source engine ancr is built on
+(Node.js 22.22 or later). [Export](#exporting) the collection (or the
+workspace), then:
+
+```bash
+npx jtaak run my-api.ancr.json --format ancr-export --namespace ancr --env CI --junit results.xml
+```
+
+`--format` and `--namespace` tell `jt` it's an ancr file whose scripts use
+`ancr.`. It runs the requests in order with their scripts, prints each
+result, writes the results as JUnit XML (which CI systems show as test
+results), and exits with a non-zero code if any test fails. `--env` picks
+one of the file's environments; `--var name=value` sets a variable, say a
+secret from your CI's settings. See `npx jtaak run --help` for the rest.
+
 ---
 
 ## Importing from other tools
@@ -474,8 +644,15 @@ detects the file type for you. You can import:
   method, URL, headers, body and auth filled in, ready to save.
 - **ancr export:** see [Sharing your work](#sharing-your-work).
 
-Postman scripts are imported as they are. Scripts that use Postman's own
-`pm.*` commands need small edits to use `ancr.test` and `ancr.expect`.
+Postman scripts are imported as they are, and most run unchanged: scripts
+have Postman's common `pm` calls too. That's `pm.test` and `pm.expect`, with
+Chai's chains such as `.to.equal`, `.to.have.property` and `.to.be.true`;
+`pm.response` with `.to.have.status(200)` and `.to.be.ok`; and
+`pm.environment`, `pm.variables`, `pm.request` and `pm.cookies`. A few Postman
+calls aren't available, such as `pm.sendRequest` (scripts can't use the
+network here) and the old `postman.*` and `tests[...]` forms. After an import,
+ancr lists the requests whose scripts use them, and a script that calls one
+fails with a message naming it.
 
 ## Generating code snippets
 
@@ -511,7 +688,8 @@ You can export at three levels:
 The export dialog offers these options:
 
 - **Include secrets** (off by default). While it's off, the file doesn't
-  contain passwords, tokens or API keys. The same goes for any header,
+  contain passwords, tokens, API keys or OAuth client secrets (OAuth
+  access tokens are never in an export). The same goes for any header,
   param or variable whose name suggests a secret: _Authorization_,
   _Cookie_, or names containing _token_, _secret_, _key_, _password_,
   _credential_ or _session_. A value that is only a `{{variable}}` is
@@ -562,6 +740,8 @@ fully or changes nothing.
   legible text (WCAG AAA contrast). Your choice is remembered. Windows'
   own high-contrast themes (Settings → Accessibility → Contrast themes)
   work too: ancr then uses your system's colours.
+- **Cookies…:** the cookies ancr keeps between requests; see
+  [Cookies](#cookies).
 - **Export workspace… / Import workspace…:** see
   [Sharing your work](#sharing-your-work).
 - **Reload:** reloads the window.
@@ -608,7 +788,8 @@ stays Ctrl+Tab).
 | `F1`                              | This guide                                  |
 
 The palette also has commands without shortcuts: closing other or all tabs,
-keeping a preview tab, showing each sidebar section, managing environments,
+keeping a preview tab, showing each sidebar section, managing environments
+and cookies,
 importing and exporting, clearing the logs or switching trace mode, the
 themes, and Diagnostics.
 
@@ -630,9 +811,9 @@ It's added alongside your own work; nothing you already have changes.
 
 ## History
 
-The **History** section of the activity bar lists the HTTP and GraphQL
-requests you've sent, newest first and grouped by day, with each one's
-status and time. Search by name or URL at the top. Click an entry to open it
+The **History** section of the activity bar lists the HTTP, GraphQL and unary
+gRPC requests you've sent, newest first and grouped by day, with each one's
+status and time (for gRPC, **OK** or the status code). Search by name or URL at the top. Click an entry to open it
 in a preview tab, as a copy of the request as it was sent, with its
 response; send it again, or change it first. Hover over an entry and click **×** to remove it, or
 click **Clear** to remove them all.
