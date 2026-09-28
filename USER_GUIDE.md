@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.5.0**
+**User Guide · version 0.6.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -26,7 +26,7 @@ check for new versions of ancr itself.
   local, staging and production.
 - Write **pre-request and test scripts**, and **run a whole collection** as a
   test suite with a pass/fail report.
-- **Import** from Postman, OpenAPI and cURL, and generate **code snippets**
+- **Import** from Postman, OpenAPI, WSDL and cURL, and generate **code snippets**
   from any request.
 - **Export and import** ancr files to share your work with teammates.
 
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.5.0.exe`, from
+1. Download the installer, `ancr Setup 0.6.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -210,6 +210,34 @@ Importing a cURL command with `-k` or `--insecure`, or a Postman request
 with SSL certificate verification off, turns the check off too, and the
 **`</> Code`** snippets include each language's equivalent.
 
+### Proxy and client certificates
+
+**Settings** (⚙) → **Network…** sets how ancr reaches servers, for every
+request and connection:
+
+- **Proxy.** By default ancr uses the proxy in the `HTTPS_PROXY` or
+  `HTTP_PROXY` environment variable, if one is set, except for the hosts in
+  `NO_PROXY`. Choose **This proxy** to enter one (`http://proxy.example.com:3128`),
+  with a username and password if it needs them, and the hosts to reach
+  directly under **No proxy for** (`localhost, .example.com`: a host covers
+  its subdomains). **No proxy** turns it off. HTTP, GraphQL, SSE, WebSocket,
+  gRPC and MCP requests go through the proxy; messaging brokers are reached
+  directly.
+- **Certificate authorities.** Add a CA certificate (PEM) your company signs
+  its servers' certificates with, and ancr trusts it as well as the system's,
+  so you don't have to turn **Verify TLS certificates** off.
+- **Client certificates.** For servers that ask for one (mutual TLS): the
+  host it's for, and either a PEM certificate and its key or a PFX / PKCS #12
+  file, with its passphrase if it has one. `api.example.com` covers its
+  subdomains, `*.example.com` only the subdomains, and `:8443` after a host
+  limits it to that port. Every protocol that uses TLS sends it, messaging
+  brokers included.
+
+ancr keeps only the files' paths, so the certificates stay where they are.
+Passwords and passphrases are encrypted with your system's key store and are
+never exported. The settings apply to requests and connections from the next
+one you send or open.
+
 ### Cookies
 
 ancr keeps cookies the way a browser does. When a response sets a cookie,
@@ -247,9 +275,18 @@ yours wins.
    - **OAuth 2.0**: see [OAuth 2.0](#oauth-20) below
 4. Choose a **Body**:
    - **JSON** or **Raw** text
-   - **x-www-form-urlencoded** or **Form Data** (key/value rows)
+   - **x-www-form-urlencoded** or **Form Data** (key/value rows). In Form
+     Data, a row's **Type** can be **File**: choose the file, and it's sent
+     as a file part named after the file, with a `Content-Type` from its
+     extension.
+   - **Binary**: a file, sent as it is. Click **Choose file…**; ancr shows
+     its name and size. Only the file's path is saved, and the file is read
+     each time you send, so a changed file sends its new contents (and a
+     moved one shows **File not found**).
 
-   ancr sets a matching `Content-Type` header for you.
+   ancr sets a matching `Content-Type` header for you. For a binary body it
+   comes from the file's extension (`.png` sends `image/png`), unless you set
+   one in **Headers**.
 
 5. Click **Send**.
 
@@ -275,6 +312,19 @@ reused an open connection has no DNS, connect or TLS time.
 The request and the response share the main panel. Drag the line between
 them to give either more room, and click **Side by side** (or **Stacked**)
 to put the response beside the request or under it. ancr remembers both.
+
+### Response examples
+
+To keep a response as an example of what a saved request returns (the
+happy path, a 404, an error), click **Save as example** next to its status
+and give it a name. Examples are listed under their request in the sidebar
+(click the arrow beside the request to show or hide them); click one to
+open it in a tab of its own, with its status, headers and body. From there
+you can **Rename** or **Delete** it, or go back to its request.
+
+Examples are saved with the request, go with it into exports (with secret
+headers such as `Set-Cookie` blanked unless you include secrets), and are
+deleted with it. A Postman collection's saved responses import as examples.
 
 ### OAuth 2.0
 
@@ -338,6 +388,14 @@ the service answers with a **fault**, its code and reason (and detail) show
 above the response. A `Content-Type` or `SOAPAction` header you add yourself
 is sent as you wrote it. Code snippets, collection runs and History treat a
 SOAP request as the HTTP request it's sent as.
+
+To start from the service's **WSDL** instead, import it (**Import** →
+**WSDL (SOAP)**, from its URL or a file): you get a request for each
+operation with the address, version and action filled in, and an envelope
+with the operation's elements. Each value is a `?` or a sample (`0`, `false`,
+a date, an enumeration's first value) to replace; optional elements are
+marked `<!--Optional:-->` and repeated ones `<!--One or more:-->`. A service
+with both SOAP 1.1 and 1.2 ports gets a folder for each.
 
 ### gRPC
 
@@ -639,6 +697,12 @@ detects the file type for you. You can import:
   operation, grouped into folders by tag. Where the spec describes a
   request body, an example body is filled in. Path parameters such as
   `/users/{id}` become `{{id}}`.
+- **WSDL (SOAP):** paste the service's WSDL URL (often its address with
+  `?wsdl`), or the WSDL itself, or choose a `.wsdl` file. ancr creates a
+  collection with a SOAP request per operation: its address, SOAP version,
+  action and an envelope to fill in (see [SOAP](#soap)). From a URL or a
+  file, the schemas and WSDLs it imports are read too; a pasted WSDL's
+  can't be, so those types are left as `?`, and the panel says so.
 - **cURL command:** paste a `curl ...` command (for example, copied from
   your browser's developer tools). It opens in the request builder with its
   method, URL, headers, body and auth filled in, ready to save.

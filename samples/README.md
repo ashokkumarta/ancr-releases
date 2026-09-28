@@ -25,7 +25,7 @@ changed.
 
 | Section   | Collection                             | What it shows                                                                                                            |
 | --------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| API       | **Sample — HTTP** (51 requests)        | See the breakdown below.                                                                                                 |
+| API       | **Sample — HTTP** (54 requests)        | See the breakdown below.                                                                                                 |
 | API       | **Sample — GraphQL** (7)               | See the breakdown below.                                                                                                 |
 | API       | **Sample — Server-Sent Events** (3)    | Named events with ids, and the same with tests on what arrives; a busy live stream (Wikimedia recent edits).                                                      |
 | API       | **Sample — gRPC** (10)                  | See the breakdown below.                                                                                                 |
@@ -40,10 +40,16 @@ changed.
 - query params and headers, including disabled rows
 - `{{variables}}` in the path, params and headers
 - JSON, raw text, urlencoded and multipart bodies
+- **Files:** a binary body, and a multipart form with a file field, both
+  sending [`sample-upload.txt`](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/sample-upload.txt).
+  A file's path is kept as it was, so after importing, download it (or use
+  any file of yours) and choose it on the request's **Body** tab
+- **Response examples:** **REST CRUD → Get one post** keeps two, *Found*
+  and *Not found*, under it in the sidebar: click the arrow beside it
 - Basic, Bearer and API-key auth, sent as a header or in the query string;
-  Digest auth; and OAuth 2.0 client credentials (set `oauthTokenUrl`,
+  Digest auth; OAuth 2.0 client credentials (set `oauthTokenUrl`,
   `oauthClientId` and `oauthClientSecret` in the environment for your
-  provider)
+  provider); and a client certificate (mutual TLS, see *Things to try*)
 - **Cookies:** a response that sets a cookie (through a redirect), a
   request that sends it back, and one with the cookie jar turned off
 - a test script written for Postman (`pm.test`, `pm.expect`,
@@ -152,6 +158,22 @@ to a different server.
   from failing to passing as the echo arrives.
 - **Variables:** type `{{nope}}` in a URL: it turns red, since the
   environment doesn't set it; `{{baseUrl}}` is green.
+- **A client certificate (mutual TLS):** **Authentication → Client
+  certificate** calls badssl.com's test server, which answers 400 until you
+  send it a certificate. Download
+  [`badssl.com-client.pem`](https://badssl.com/certs/badssl.com-client.pem)
+  (the certificate and its key in one file, passphrase `badssl.com`), then
+  open **⚙ → Network…**, add a client certificate for host
+  `client.badssl.com` (PEM, choosing that file as both the certificate and
+  the key, with the passphrase), **Save**, and send it again: 200.
+- **Save a response as an example:** send any request, click **Save as
+  example**, and find it under the request in the sidebar.
+- **A SOAP service from its WSDL:** open **Import → WSDL (SOAP)** and paste
+  `http://www.dneonline.com/calculator.asmx?WSDL`: you get the calculator's
+  four operations for SOAP 1.1 and 1.2, each with its envelope ready to
+  fill in.
+- **A proxy:** **⚙ → Network…** uses the proxy in `HTTPS_PROXY` if one is
+  set, or one you enter there.
 
 ### Good to know
 
@@ -161,8 +183,10 @@ to a different server.
   and so on) are placeholders that the public test services accept. They
   aren't real accounts.
 - **Scripts & tests → "A failing test (on purpose)"** is meant to fail, so
-  you can see what a failed test looks like. Every other test passes
-  against both environments.
+  you can see what a failed test looks like. **Authentication → Client
+  certificate** fails too until you add its certificate, and the two file
+  requests until you choose the file. Every other test passes against both
+  environments.
 - Scripts run for HTTP and GraphQL requests, so the SSE, gRPC, WebSocket
   and MCP samples have none.
 - A value a script sets in `ancr.variables` is used by that request only.

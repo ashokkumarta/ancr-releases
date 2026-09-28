@@ -390,6 +390,57 @@
                 "protocol": "http",
                 "testScript": "ancr.test(\"both fields arrived\", () => {\n  const form = ancr.response.json().form;\n  ancr.expect(form.title).toBe(\"Quarterly report\");\n  ancr.expect(form.category).toBe(\"finance\");\n});"
               }
+            },
+            {
+              "type": "request",
+              "name": "Binary body (a file, sent as it is)",
+              "config": {
+                "method": "POST",
+                "url": "{{baseUrl}}/post",
+                "params": [],
+                "headers": [],
+                "body": {
+                  "mode": "binary",
+                  "binaryPath": "sample-upload.txt"
+                },
+                "auth": {
+                  "type": "none"
+                },
+                "protocol": "http",
+                "testScript": "ancr.test(\"status is 200\", () => {\n  ancr.expect(ancr.response.status).toBe(200);\n});\n\nancr.test(\"the server got the file's text\", () => {\n  ancr.expect(JSON.stringify(ancr.response.json())).toContain(\"Hello from a file\");\n});"
+              }
+            },
+            {
+              "type": "request",
+              "name": "Multipart form-data with a file",
+              "config": {
+                "method": "POST",
+                "url": "{{baseUrl}}/post",
+                "params": [],
+                "headers": [],
+                "body": {
+                  "mode": "form-data",
+                  "formData": [
+                    {
+                      "key": "description",
+                      "value": "A file and a text field",
+                      "enabled": true
+                    },
+                    {
+                      "key": "attachment",
+                      "value": "",
+                      "enabled": true,
+                      "type": "file",
+                      "src": "sample-upload.txt"
+                    }
+                  ]
+                },
+                "auth": {
+                  "type": "none"
+                },
+                "protocol": "http",
+                "testScript": "ancr.test(\"status is 200\", () => {\n  ancr.expect(ancr.response.status).toBe(200);\n});\n\nancr.test(\"one file arrived as a file part\", () => {\n  ancr.expect(Object.keys(ancr.response.json().files).length).toBe(1);\n});"
+              }
             }
           ]
         },
@@ -547,6 +598,24 @@
                   }
                 },
                 "testScript": "// Set oauthTokenUrl, oauthClientId and oauthClientSecret in the environment first.\nancr.test(\"the token went in the Authorization header\", () => {\n  ancr.expect(JSON.stringify(ancr.response.json())).toContain(\"Bearer \");\n});"
+              }
+            },
+            {
+              "type": "request",
+              "name": "Client certificate (mutual TLS: add it in the network settings)",
+              "config": {
+                "method": "GET",
+                "url": "https://client.badssl.com/",
+                "params": [],
+                "headers": [],
+                "body": {
+                  "mode": "none"
+                },
+                "auth": {
+                  "type": "none"
+                },
+                "protocol": "http",
+                "testScript": "ancr.test(\"the server accepted the client certificate\", () => {\n  ancr.expect(ancr.response.status).toBe(200);\n});"
               }
             }
           ]
@@ -1083,7 +1152,27 @@
                 },
                 "protocol": "http",
                 "testScript": "ancr.test(\"status is 200\", () => {\n  ancr.expect(ancr.response.status).toBe(200);\n});"
-              }
+              },
+              "examples": [
+                {
+                  "name": "Found",
+                  "status": 200,
+                  "statusText": "OK",
+                  "headers": {
+                    "content-type": "application/json; charset=utf-8"
+                  },
+                  "body": "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n  \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n}"
+                },
+                {
+                  "name": "Not found (an id that doesn’t exist)",
+                  "status": 404,
+                  "statusText": "Not Found",
+                  "headers": {
+                    "content-type": "application/json; charset=utf-8"
+                  },
+                  "body": "{}"
+                }
+              ]
             },
             {
               "type": "request",
