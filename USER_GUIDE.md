@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.3.2**
+**User Guide · version 0.4.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -18,6 +18,9 @@ check for new versions of ancr itself.
 - Open live **WebSocket** connections and talk to **MCP servers** (Model
   Context Protocol): browse and call their tools, read resources and get
   prompts.
+- Connect to message brokers and event servers (**MQTT**, **Kafka**,
+  **Socket.IO**, **AMQP** such as RabbitMQ, and **NATS**): subscribe,
+  publish, and watch every message in one timeline.
 - Organize everything into collections and folders.
 - Use **environments** and `{{variables}}` to switch between setups such as
   local, staging and production.
@@ -33,10 +36,10 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.3.2.exe`, from
+1. Download the installer, `ancr Setup 0.4.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
-2. If Windows shows *"Windows protected your PC"*, click **More info**, then
+2. If Windows shows _"Windows protected your PC"_, click **More info**, then
    **Run anyway**.
 3. Follow the installer. You can choose the install folder.
 4. Start ancr from the Start menu or the desktop shortcut.
@@ -80,17 +83,20 @@ start the app.
   - **API:** saved HTTP, GraphQL, SSE and gRPC requests.
   - **WebSocket:** saved WebSocket connections.
   - **MCP:** saved MCP servers.
+  - **Messaging:** saved broker connections (MQTT, Kafka, Socket.IO, AMQP,
+    NATS).
   - **History:** the requests you've sent (see [History](#history)).
 
   Click the section already shown to hide the sidebar, and any section to
   show it again. At the bottom, **{ }** opens the environments and **?** this
   guide.
+
 - **Sidebar:** the chosen section's collections. Drag its right edge to make
   it wider or narrower. ancr remembers the section, the width and whether
   the sidebar is hidden.
 - **Main panel:** what you've opened, one tab each (see [Tabs](#tabs)).
   That can be a request and its response, a WebSocket connection, an MCP
-  server, or the details of a collection or folder.
+  server, a messaging connection, or the details of a collection or folder.
 - **Bottom panel:** tabs under the sidebar and main panel.
   - **Logs** is always there: a running log of every request sent,
     connection events and script output. Turn on **Trace** to log full
@@ -109,7 +115,7 @@ Everything you open gets a tab above the main panel, showing its protocol,
 its name and, when there are unsaved changes, a dot.
 
 - **Preview tabs:** a single click in the sidebar opens the item in a
-  *preview* tab (its name in italics), which the next item you click
+  _preview_ tab (its name in italics), which the next item you click
   replaces, so browsing doesn't pile up tabs. A tab is kept once you edit
   it, send it or connect it, or when you double-click the tab. New requests
   and connections, and cURL imports, open in kept tabs.
@@ -131,8 +137,8 @@ Deleting an item closes its tab, and renaming it renames the tab.
 Every saved request, connection and server lives in a **collection**.
 Collections can contain **folders**, and folders can contain sub-folders.
 Each section starts with one collection: **My Collection** (API),
-**My Connections** (WebSocket) and **My MCPs** (MCP). You can rename or
-delete these like any other collection.
+**My Connections** (WebSocket), **My MCPs** (MCP) and **My Brokers**
+(Messaging). You can rename or delete these like any other collection.
 
 **Working with the tree**
 
@@ -146,6 +152,7 @@ delete these like any other collection.
   - **Delete**
 
   Every icon has a tooltip.
+
 - Click a collection or folder's **name** to see its details in the main
   panel:
   - its type and creation date
@@ -155,6 +162,7 @@ delete these like any other collection.
     **Export**, **Rename** and **Delete**
 
   In the details view, you can also click the name at the top to rename it.
+
 - The **new collection** icon on a section's header creates a new top-level
   collection. The header also has **import** and **export** icons.
 - **Double-click** any name in the tree to rename it.
@@ -190,7 +198,7 @@ or issued for another host. The error in **Logs** says why, for example
 `self-signed certificate (DEPTH_ZERO_SELF_SIGNED_CERT)`.
 
 To test a server like that, untick **Verify TLS certificates**: on the
-**Settings** tab of a request, the **Settings** tab of a WebSocket
+**Settings** tab of a request, a WebSocket connection or a messaging
 connection, or the **Headers / TLS** tab of an MCP server over HTTP. A
 warning shows while it's off, and a dot marks the tab. The connection is
 still encrypted, but ancr no longer checks who it's talking to, so only do
@@ -216,6 +224,7 @@ with SSL certificate verification off, turns the check off too, and the
    - **x-www-form-urlencoded** or **Form Data** (key/value rows)
 
    ancr sets a matching `Content-Type` header for you.
+
 5. Click **Send**.
 
 The response shows the status, time taken and size, then four tabs:
@@ -289,12 +298,54 @@ Create a server with the **new server** icon on an MCP collection or folder.
 A stdio server runs as a program on your own computer, so only connect to
 servers you trust.
 
+## Messaging connections
+
+Create a connection with the **new connection** icon on a Messaging
+collection or folder, and choose its kind: **MQTT**, **Kafka**,
+**Socket.IO**, **AMQP** (RabbitMQ) or **NATS**. Each starts with a local
+address you can change:
+
+| Kind              | Address                                                                    | A channel is                               |
+| ----------------- | -------------------------------------------------------------------------- | ------------------------------------------ |
+| MQTT (3.1.1 or 5) | `mqtt://`, `mqtts://`, `ws://` or `wss://`                                 | a topic (`+` and `#` wildcards)            |
+| Kafka             | `kafka://host:9092` (several brokers comma-separated), `kafkas://` for TLS | a topic                                    |
+| Socket.IO         | `http(s)://host/namespace`                                                 | an event name (`*` for all of them)        |
+| AMQP              | `amqp://` or `amqps://`, the vhost as the path                             | a queue, and a routing key when publishing |
+| NATS              | `nats://` or `tls://`                                                      | a subject (`*` and `>` wildcards)          |
+
+- **Auth:** a username and password (**Basic**) for every kind, which
+  Kafka sends with SASL, or a token (**Bearer**) for NATS and Socket.IO.
+- **Settings:** the kind's own options, such as the MQTT version and client
+  ID, Kafka's SASL mechanism, or Socket.IO's path and auth payload, and
+  **Verify TLS certificates** (see [TLS certificates](#tls-certificates)).
+- **Headers:** sent with the connection's handshake, for Socket.IO and for
+  MQTT over `ws://` or `wss://`.
+- **Subscriptions:** add a channel with its options (MQTT's QoS, a Kafka
+  consumer group or reading from the beginning, an AMQP exchange to bind a
+  queue to, a NATS queue group). Subscriptions are saved with the
+  connection and made again each time you connect; ● marks the active ones.
+  If the broker refuses one, the reason shows next to it.
+- **Publish:** enter the channel and the payload, a key (Kafka) and headers
+  where the kind has them, and its options (QoS and retain, a partition,
+  waiting for a Socket.IO acknowledgement, an AMQP exchange, a NATS request
+  that waits for a reply). The result, or the broker's reason for refusing,
+  shows under **Publish**.
+- **Timeline:** every message sent (↑) and received (↓), with connection
+  events. Filter it by channel, and click a message to see its key,
+  headers, details (QoS, partition and offset, delivery tag…) and payload,
+  with JSON laid out.
+
+A payload that isn't text is shown, and can be sent, as base64. A lost
+connection isn't reconnected by itself: the timeline shows it ending, and
+**Connect** opens it again. Click **Save** to keep the connection's
+settings and subscriptions.
+
 ---
 
 ## Environments and variables
 
-An **environment** is a named set of variables, for example *Local*,
-*Staging* and *Production*. Pick the active one from the switcher in the
+An **environment** is a named set of variables, for example _Local_,
+_Staging_ and _Production_. Pick the active one from the switcher in the
 header, or **No Environment**. Click **Manage** to create, rename and delete
 environments and edit their variables.
 
@@ -316,14 +367,14 @@ the `ancr` object:
 
 ```js
 // Pre-request script: runs before the request is sent
-ancr.variables.token = "abc123";   // use it in this request as {{token}}
+ancr.variables.token = 'abc123'; // use it in this request as {{token}}
 
 // Test script: runs after the response comes back
-ancr.test("status is 200", () => {
+ancr.test('status is 200', () => {
   ancr.expect(ancr.response.status).toBe(200);
 });
 
-ancr.test("body has the right id", () => {
+ancr.test('body has the right id', () => {
   ancr.expect(ancr.response.json().id).toBe(42);
 });
 ```
@@ -359,6 +410,7 @@ Put `.not` before any check to reverse it, e.g.
   // Test script of a login request: keep the token for the requests after it.
   ancr.environment.token = ancr.response.json().token;
   ```
+
 - `ancr.request`: the request being sent (read-only: changing it doesn't
   change what's sent; set variables instead).
 - `ancr.response`, in test scripts. It has `.status`, `.statusText`,
@@ -447,18 +499,18 @@ You can export at three levels:
 - **One collection or folder:** click its name in the sidebar, then click
   **Export** in the details panel. An exported folder becomes its own
   collection in the file.
-- **A whole section:** click the **export** icon on the API, WebSocket or
-  MCP section header.
+- **A whole section:** click the **export** icon on the API, WebSocket,
+  MCP or Messaging section header.
 - **Everything:** **⚙ → Export workspace…** exports every collection in all
-  three sections, plus all environments.
+  four sections, plus all environments.
 
 The export dialog offers these options:
 
 - **Include secrets** (off by default). While it's off, the file doesn't
   contain passwords, tokens or API keys. The same goes for any header,
-  param or variable whose name suggests a secret: *Authorization*,
-  *Cookie*, or names containing *token*, *secret*, *key*, *password*,
-  *credential* or *session*. A value that is only a `{{variable}}` is
+  param or variable whose name suggests a secret: _Authorization_,
+  _Cookie_, or names containing _token_, _secret_, _key_, _password_,
+  _credential_ or _session_. A value that is only a `{{variable}}` is
   always kept, so your teammate can use their own environment. Secrets
   typed directly into a request body or a script can't be detected, so
   check those yourself.
@@ -492,7 +544,7 @@ The preview also warns you about:
 
 An import always **adds new copies** and never changes anything already in
 your workspace. If a collection or environment with the same name exists,
-the copy is named e.g. *Users API (imported)*. An import either completes
+the copy is named e.g. _Users API (imported)_. An import either completes
 fully or changes nothing.
 
 ---
@@ -524,8 +576,8 @@ fully or changes nothing.
 
 Press `Ctrl+K` (**⌘K** on a Mac) to open the command palette. Type to
 search every command, and every saved request, WebSocket connection, MCP
-server, collection and folder, by name. The letters you type only need to
-appear in order, so *gtus* finds *Get users*. Use the arrow keys to pick a
+server, messaging connection, collection and folder, by name. The letters you type only need to
+appear in order, so _gtus_ finds _Get users_. Use the arrow keys to pick a
 result, **Enter** to run or open it, and **Escape** to close the palette.
 Each command shows its shortcut, if it has one.
 
@@ -533,23 +585,23 @@ The shortcuts work anywhere in the window, including while you're typing in
 a field or an editor. On a Mac, use **⌘** in place of **Ctrl** (Ctrl+Tab
 stays Ctrl+Tab).
 
-| Shortcut | Command |
-|---|---|
-| `Ctrl+K` or `Ctrl+Shift+P` | Show all commands |
-| `Ctrl+Enter` | Send the open request |
-| `Ctrl+S` | Save the open request, connection or server |
-| `Ctrl+N` | New request |
-| `Ctrl+W` | Close the tab |
-| `Ctrl+Tab` or `Ctrl+PageDown` | Next tab |
-| `Ctrl+Shift+Tab` or `Ctrl+PageUp` | Previous tab |
-| `Ctrl+B` | Show or hide the sidebar |
-| `Ctrl+J` | Show or hide the bottom panel |
-| `Ctrl+Shift+H` | Show History |
-| `Ctrl+=` | Zoom in |
-| `Ctrl+-` | Zoom out |
-| `Ctrl+0` | Actual size |
-| `F11` | Full screen |
-| `F1` | This guide |
+| Shortcut                          | Command                                     |
+| --------------------------------- | ------------------------------------------- |
+| `Ctrl+K` or `Ctrl+Shift+P`        | Show all commands                           |
+| `Ctrl+Enter`                      | Send the open request                       |
+| `Ctrl+S`                          | Save the open request, connection or server |
+| `Ctrl+N`                          | New request                                 |
+| `Ctrl+W`                          | Close the tab                               |
+| `Ctrl+Tab` or `Ctrl+PageDown`     | Next tab                                    |
+| `Ctrl+Shift+Tab` or `Ctrl+PageUp` | Previous tab                                |
+| `Ctrl+B`                          | Show or hide the sidebar                    |
+| `Ctrl+J`                          | Show or hide the bottom panel               |
+| `Ctrl+Shift+H`                    | Show History                                |
+| `Ctrl+=`                          | Zoom in                                     |
+| `Ctrl+-`                          | Zoom out                                    |
+| `Ctrl+0`                          | Actual size                                 |
+| `F11`                             | Full screen                                 |
+| `F1`                              | This guide                                  |
 
 The palette also has commands without shortcuts: closing other or all tabs,
 keeping a preview tab, showing each sidebar section, managing environments,
