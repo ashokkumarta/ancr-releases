@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.4.0**
+**User Guide · version 0.4.1**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.4.0.exe`, from
+1. Download the installer, `ancr Setup 0.4.1.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -176,8 +176,10 @@ Each section starts with one collection: **My Collection** (API),
 ## Building and sending requests
 
 Create a request with the **new request** icon on any API collection or
-folder. Choose the protocol (**HTTP**, **GraphQL**, **SSE** or **gRPC**) and
-give it a name. The protocol is fixed once the request is created.
+folder, and click its protocol: **HTTP**, **GraphQL**, **SSE** or **gRPC**
+(**Cancel** closes the dialog). It's created at once with a default name,
+such as _New HTTP request_; click the name to rename it. The protocol is
+fixed once the request is created.
 
 The toolbar above a request shows its name, where it lives, and buttons to
 **undo**, **redo**, **rename** and **delete**. Click the name to rename it
@@ -301,9 +303,11 @@ servers you trust.
 ## Messaging connections
 
 Create a connection with the **new connection** icon on a Messaging
-collection or folder, and choose its kind: **MQTT**, **Kafka**,
-**Socket.IO**, **AMQP** (RabbitMQ) or **NATS**. Each starts with a local
-address you can change:
+collection or folder, and click its kind: **MQTT**, **Kafka**,
+**Socket.IO**, **AMQP** (RabbitMQ) or **NATS** (**Cancel** closes the
+dialog). It's created at once with a default name, such as _New MQTT
+connection_, which you can click to rename, and a local address you can
+change:
 
 | Kind              | Address                                                                    | A channel is                               |
 | ----------------- | -------------------------------------------------------------------------- | ------------------------------------------ |
