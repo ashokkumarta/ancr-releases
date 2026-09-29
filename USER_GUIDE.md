@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.8.0**
+**User Guide · version 0.9.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -36,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.8.0.exe`, from
+1. Download the installer, `ancr Setup 0.9.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -158,12 +158,43 @@ The workspace list is in the header, next to the environments:
 - **⋯ → New workspace…** makes an empty one and opens it.
 - **⋯ → Rename workspace…** renames the open one.
 - **⋯ → Delete workspace…** deletes the open one, with everything in it,
-  and opens another. If it's the only workspace, it's emptied instead and
-  gets the name **My Workspace** back.
+  and opens another. The only workspace can't be deleted; clear it
+  instead (below).
+- **⋯ → Manage workspaces…** opens the **Workspaces** view.
+
+### Managing workspaces
+
+The **Workspaces** view (**⋯ → Manage workspaces…**, or **Workspace:
+Manage workspaces** in the command palette) takes the place of the tabs in
+the main panel. It shows every workspace as a card with a count of what's
+in it: requests, WebSocket, MCP and messaging connections, folders,
+environments, History entries and cookies. The open one is marked **Currently open**.
+
+At the top:
+
+- **Create new workspace…** makes an empty workspace and opens it.
+- **Import new workspace…** imports an ancr export into a new workspace
+  (named after the file; you can change the name) and opens it.
+
+On each card:
+
+- **Open** opens that workspace. The view stays open.
+- **Rename** renames it.
+- **Export** exports everything in it to a file; see
+  [Sharing your work](#sharing-your-work).
+- **Import** imports an ancr export into it. A workspace that isn't open
+  stays closed.
+- **Clear** deletes everything in it (collections, environments, History,
+  cookies and OAuth 2.0 tokens) and keeps the workspace, with its name.
+- **Delete** deletes the workspace and everything in it. It's greyed out
+  when there's only one workspace; that one can be cleared.
+
+Close the view with **×**, or open anything from the sidebar.
 
 Settings (the theme, **Network…**, History limits) are the same for every
-workspace. When you import an ancr export, you choose whether it goes into
-the open workspace or a new one.
+workspace. When you import an ancr export from a section header or the
+Import panel, you choose whether it goes into the open workspace or a new
+one.
 
 ## Collections and folders
 
@@ -232,16 +263,30 @@ connection, and refuses a server whose certificate is self-signed, expired
 or issued for another host. The error in **Logs** says why, for example
 `self-signed certificate (DEPTH_ZERO_SELF_SIGNED_CERT)`.
 
-To test a server like that, untick **Verify TLS certificates**: on the
-**Settings** tab of a request, a WebSocket connection or a messaging
-connection, or the **Headers / TLS** tab of an MCP server over HTTP. A
-warning shows while it's off, and a dot marks the tab. The connection is
-still encrypted, but ancr no longer checks who it's talking to, so only do
-this for servers you control, and save it only where you need it.
+To test a server like that, turn the check off:
+
+- **For everything:** untick **⚙ → Verify TLS certificates** (or run
+  **Network: Turn TLS certificate checks on or off** from the command
+  palette). It's on by default. Every request, WebSocket and messaging
+  connection and MCP server that doesn't set its own follows it, so
+  turning it back on turns the check back on for all of them.
+- **For one of them:** set **Verify TLS certificates** to **Off for this
+  request** (or connection, or server), or **On for this …** to check it
+  even while the setting is off. It's on the **Settings** tab of a
+  request, a WebSocket connection or a messaging connection, and the
+  **Headers / TLS** tab of an MCP server over HTTP. **As in Settings**
+  (the default) follows the setting, and shows whether it's on or off.
+  Connections saved before this version that had the check on now follow
+  the setting; those that had it off stay off.
+
+A warning shows while the check is off, and a dot marks the tab. The
+connection is still encrypted, but ancr no longer checks who it's talking
+to, so only do this for servers you control, and only where you need it.
 
 Importing a cURL command with `-k` or `--insecure`, or a Postman request
-with SSL certificate verification off, turns the check off too, and the
-**`</> Code`** snippets include each language's equivalent.
+with SSL certificate verification off, sets that request to **Off for this
+request**, and the **`</> Code`** snippets include each language's
+equivalent.
 
 ### Proxy and client certificates
 
@@ -859,7 +904,8 @@ You can export at three levels:
   collection in the file.
 - **A whole section:** click the **export** icon on the API, WebSocket,
   MCP or Messaging section header.
-- **Everything:** **⚙ → Export workspace…** exports every collection in all
+- **Everything:** **Export** on a workspace's card in the
+  [Workspaces view](#managing-workspaces) exports every collection in all
   four sections, plus all environments.
 
 The export dialog offers these options:
@@ -883,7 +929,9 @@ The export dialog offers these options:
   section header. For API collections, use the Import panel, choose
   **ancr export**, and paste or choose the file. Only that section's
   collections are imported.
-- **Everything:** **⚙ → Import workspace…**.
+- **Everything:** **Import** on a workspace's card in the
+  [Workspaces view](#managing-workspaces) (into that workspace), or
+  **Import new workspace…** there (into a new one).
 
 Nothing is changed until you confirm. First you see a preview of what will
 be added, with these choices:
@@ -910,22 +958,37 @@ fully or changes nothing.
 
 ## Settings menu (⚙)
 
-- **Theme:** **System** (the default) follows your computer's light or dark
+- **Theme** (click it to see the choices; collapsed, it shows the one
+  you're using, and under System which theme that is right now):
+  **System** (the default) follows your computer's light or dark
   setting and switches when it does. **Dark** and **Light** keep ancr in one
   theme. **High contrast** is a black theme with white text and bright
   colours, stronger borders and a thicker focus outline, for the most
   legible text (WCAG AAA contrast). Your choice is remembered. Windows'
   own high-contrast themes (Settings → Accessibility → Contrast themes)
   work too: ancr then uses your system's colours.
+
+  ancr's icon in the taskbar (Windows) or the Dock (Mac) follows your
+  computer's theme rather than ancr's: a light icon on a light taskbar,
+  and a high-contrast one while a contrast theme is on. A pinned taskbar
+  button, shortcuts and the installer keep the standard icon.
 - **Cookies…:** the cookies ancr keeps between requests; see
   [Cookies](#cookies).
+- **Network…:** the proxy, certificate authorities and client
+  certificates; see [Proxy and client certificates](#proxy-and-client-certificates).
+- **Verify TLS certificates** (on by default; a tick shows it's on): whether
+  requests check servers' certificates, unless a request's own
+  **Settings** tab says otherwise; see [TLS certificates](#tls-certificates).
 - **Licence…:** add or remove an a.n.c.r Pro licence; see
   [a.n.c.r Pro](#ancr-pro).
-- **Export workspace… / Import workspace…:** see
-  [Sharing your work](#sharing-your-work).
-- **Reload:** reloads the window.
-- **Actual Size**, **Zoom In** and **Zoom Out:** change the text size.
-- **Toggle Full Screen**
+- **Screen** (click it to see its items; collapsed, it shows the zoom
+  level, and **Full screen** while the window is):
+  - **Reload:** reloads the window.
+  - **Actual Size**, **Zoom In** and **Zoom Out:** change the text size.
+    The menu stays open, so you can click them a few times and watch the
+    level change.
+  - **Full Screen:** turns full screen on or off (also **F11**); a tick
+    shows it's on.
 - **Check for Updates**
 - **Diagnostics:** shows the ancr version and system details, and any crash
   reports. Crash reports stay on your computer and are never sent anywhere.
@@ -986,7 +1049,9 @@ it works straight away, with no sign-up or keys.
 1. Download
    [ancr-sample-workspace.ancr.json](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/ancr-sample-workspace.ancr.json).
    ([What's inside](https://github.com/ashokkumarta/ancr-releases/tree/main/samples).)
-2. Open **⚙ → Import workspace…** and choose the file.
+2. Open **⋯ → Manage workspaces…** (next to the workspace list), click
+   **Import** on your workspace's card, and choose the file. Or click
+   **Import new workspace…** to keep the sample in a workspace of its own.
 3. In the preview, tick **Import scripts**, then click **Import**.
 4. Pick **Sample — httpbin** in the environment switcher.
 
@@ -1052,6 +1117,6 @@ A licence is one of three kinds:
   only to the APIs you send requests to, and to check for ancr updates.
 - A Pro licence is checked on your computer; ancr never sends it anywhere.
 - To back up your work or move it to another computer, use
-  **⚙ → Export workspace…**, then **Import workspace…** on the other
-  computer. If you want the backup to include passwords and tokens, turn on
+  **Export** in the [Workspaces view](#managing-workspaces), then
+  **Import new workspace…** there on the other computer. If you want the backup to include passwords and tokens, turn on
   **Include secrets** when you export.
