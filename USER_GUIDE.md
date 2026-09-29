@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.9.0**
+**User Guide · version 0.10.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -23,7 +23,8 @@ check for new versions of ancr itself.
   publish, and watch every message in one timeline.
 - Organize everything into collections and folders.
 - Use **environments** and `{{variables}}` to switch between setups such as
-  local, staging and production.
+  local, staging and production, and keep API keys and passwords in the
+  encrypted **vault**.
 - Write **pre-request and test scripts**, and **run a whole collection** as a
   test suite with a pass/fail report.
 - **Import** from Postman, OpenAPI, WSDL and cURL, and generate **code snippets**
@@ -36,7 +37,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.9.0.exe`, from
+1. Download the installer, `ancr Setup 0.10.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -661,6 +662,56 @@ while the request runs.
 
 Scripts can also set variables for a single run (see below).
 
+### The vault
+
+The **vault** keeps secrets such as API keys, passwords and tokens
+encrypted on your computer, protected by your computer login (Windows'
+data protection, or the Keychain on a Mac). There's one vault for ancr, so
+the same secret works in every workspace. Open it from **Settings (⚙) →
+Vault…**.
+
+**Adding a secret:** click **+ Add secret**, give it a name (letters,
+digits, `_` and `-`) and its value, and **Save**. The value box hides what
+you type; tick **Show while typing** to check it.
+
+**Using a secret:** write `{{vault.name}}` wherever a variable can go, for
+example `Authorization: Bearer {{vault.stripe_key}}`. **Copy reference**
+puts that on the clipboard for you. The value is filled in only at the
+moment a request is sent, so requests, environments, exports and history
+keep `{{vault.name}}` and never the value. In the colour-coded fields, a
+secret the vault has shows green (hover: _filled in from the vault when
+sent_), and one it doesn't have shows red.
+
+**Seeing and copying a value:** the vault lists names, never values.
+**Reveal** shows one value for 30 seconds (**Hide** hides it sooner).
+**Copy value** copies it without showing it, and it's cleared from the
+clipboard after 30 seconds if it's still there. The Logs say a secret was
+revealed or copied, never what it is.
+
+**Changing a secret:** **Edit** gives it a new value (leave the box empty
+to keep the current one). **Rename** changes its name; if requests,
+connections or environments in the open workspace use it, you can change
+them to the new name at the same time. **Delete** says how many places in
+the open workspace still use it before you confirm.
+
+**Moving a variable into the vault:** in **Manage** (environments), a
+variable's **Move to vault** stores its value in the vault and leaves
+`{{vault.name}}` in the environment, saved straight away. Everything that
+used the variable keeps working, and the secret no longer goes out with
+the environment's exports.
+
+**What's hidden:** if a secret's value (four characters or longer) comes
+back in a response, a script's log, a run or load test report, a stream's
+messages or history, ancr shows `•••` instead. A test script that copies a
+secret into the environment saves `{{vault.name}}`, not the value. Scripts
+do see the request as it's sent, secrets included, so a script you write
+could read one.
+
+The vault stays on this computer: it isn't exported, and another computer
+or user account can't read it. On a new computer, add the secrets again.
+If your computer can't encrypt (some Linux setups without a keyring), ancr
+won't keep secrets rather than keep them in plain text.
+
 ---
 
 ## Pre-request and test scripts
@@ -813,14 +864,160 @@ set in `ancr.environment` carries on to the next pass and is saved to the
 environment afterwards, as in a normal run.
 
 The results show each iteration with its row's values and each request's
-outcome. **Save JUnit XML…** saves them for a CI system (a test suite per
-request per iteration) and **Save CSV…** for a spreadsheet (a row per request
-per iteration, with a column per data value). Both, and the runner, show
-who the licence is for and its id ("Licensed to …"): the JUnit file as each
+outcome. To keep or share them:
+
+- **Save HTML report…** saves a report to open in any browser, attach to a
+  ticket or keep with a build: a summary (passes, requests passed, failed
+  and not sent, tests, and request times: median, 95th percentile and
+  slowest), the failures first, then each pass with its data and every
+  request. It's a single file that runs nothing and loads nothing, so it
+  opens offline. **Open** next to "Saved to …" opens it.
+- **Save JUnit XML…** saves them for a CI system (a test suite per request
+  per iteration), and **Save CSV…** for a spreadsheet (a row per request per
+  iteration, with a column per data value).
+
+Every report, and the runner, shows who the licence is for and its id
+("Licensed to …"): the HTML report at its foot, the JUnit file as each
 suite's properties, the CSV file as a last line starting with `#`.
+
+#### Baselines
+
+To see what changed since a run you trust, click **Keep as baseline** after
+it. Each collection or folder keeps one baseline, in its workspace. Every
+later run is then compared with it, and the results say:
+
+- whether the run is **worse than the baseline** (something newly fails or
+  is missing), **no worse** or **the same**;
+- what **newly fails**, what's **fixed**, what's **still failing** and
+  which tests newly fail;
+- **status changes** (200 → 500);
+- requests that got **slower** or **faster**: at least 1.5 times the time,
+  and at least 100 ms apart, so quick requests don't flap;
+- requests or passes **added** or **missing** since (the collection or the
+  data changed). A run you stopped isn't marked down for the passes it didn't
+  make.
+
+Passes are matched by number, and each request with itself (renaming it
+doesn't matter), so compare runs of the same data file (or the same number
+of times). The HTML report
+includes the comparison. **Keep as baseline** again replaces it (it asks
+first), and **Clear baseline** removes it. A baseline holds each request's
+outcome, status and time, never the responses themselves, and goes when its
+workspace is deleted or cleared.
 
 Without a licence the icon still opens the runner, which explains what it
 does and how to add a licence.
+
+### Load testing (Pro)
+
+With an [a.n.c.r Pro](#ancr-pro) licence, the **gauge** icon next to ▶ Run
+(**Load test this collection**, or folder) runs its requests with many
+**virtual users** at once, to see how a server holds up. Each user goes
+through the requests in order, again and again, like someone using the
+app.
+
+**Only load-test servers you run or are allowed to test.** Many users at
+once can slow a server down or take it offline. The test runs in ancr
+itself, so ancr can feel slower while a heavy one runs.
+
+The settings:
+
+- **Virtual users:** how many run at once (up to 200).
+- **For a time** (up to an hour) or **a number of rounds** per user.
+- **Ramp-up:** start the users evenly over that many seconds, instead of all
+  at once.
+- **Think time** between one request and the next, per user.
+- **Use a data file:** hand out a CSV or JSON file's rows, one per round, as
+  `{{variables}}` and `ancr.iteration` (as in [running with
+  data](#running-with-data-pro)).
+- **Run pre-request and test scripts** (on by default). Turn it off for raw
+  throughput. When they run, a failed test counts as a failed request.
+- **Thresholds** (optional): the 95th-percentile latency must stay under a
+  number of milliseconds, the error rate (failed or not sent) at or under a
+  percentage, and the throughput at or above a number of requests per
+  second. A test passes when it meets them all.
+
+Each user has its own copy of the environment (what its scripts set carries
+on for that user, and nothing is saved) and its own cookies, starting from
+the workspace's, so a logged-in session works. What the test sets isn't
+kept.
+
+While it runs you see the elapsed time, the users running, the requests so
+far, the requests per second and 95th-percentile latency in the last second,
+and the errors, with small charts of both. **Stop** ends it: each user
+finishes the request it's in.
+
+The results show whether it **passed**, **failed** (a threshold wasn't met)
+or was **stopped**; each threshold; the throughput, error rate and latency
+(median, 95th and 99th percentile, slowest); charts over time; a row per
+request; the status codes; and the most frequent problems.
+
+- **Save HTML report…** saves it as a single page with charts, like the data
+  runner's report, and **Save CSV…** saves the timeline, a row per second.
+  Both are marked with the licence.
+- **Keep as load baseline** keeps the test for that collection or folder.
+  Later tests are compared with it: throughput, error rate and latency
+  (median, 95th and 99th percentile), overall and per request, where they
+  moved by 10% or more (and by at least 10 ms of latency or half a point of
+  error rate, so small numbers don't flap). Lower throughput, or higher
+  errors or latency, is **worse**. It says when the two tests ran with
+  different settings. **Clear load baseline** removes it. A collection or
+  folder keeps its load baseline apart from its data-run one.
+
+### Checking MCP servers (Pro)
+
+An MCP server's tools are instructions to an AI model as much as they are
+functions: the model reads each tool's description to decide what to do. A
+description can quietly tell the model to read a secret or keep something
+from you ("tool poisoning"), and a server can change its tools after you've
+started trusting it. With an [a.n.c.r Pro](#ancr-pro) licence, the
+**Checks** tab of a saved MCP server checks it for you, on a connection of
+its own (a stdio server's command runs as it does when you connect). Save
+the server first: the checks use the saved server.
+
+**Run checks** does three things, and gives a verdict: **Failed** (a
+breaking change, a high finding or a failed call), **Passed, with
+warnings** (a changed description or a medium finding) or **Passed**.
+
+- **The contract:** everything the server offers (its tools with their
+  arguments, resources, resource templates and prompts). After a check you
+  trust, click **Keep this contract**. Later checks then show what changed:
+  **breaking** changes first (a tool, resource or prompt removed; an
+  argument removed, retyped or made required), then **warnings** (a changed
+  tool, argument or prompt description, or changed server instructions:
+  read these, since that's how a changed server slips in new instructions),
+  then additions and the server's version. **Clear kept contract** removes
+  it.
+- **The scan** reads every description the model reads (it never calls a
+  tool) for signs of tool poisoning, each with a severity and the text it
+  matched:
+  - **High:** instructions that override what the model was told or keep
+    things from you ("ignore previous instructions", "do not tell the
+    user", `<IMPORTANT>` tags); files that hold secrets (`~/.ssh`, `.env`,
+    cloud credentials); asking to pass on a password, token or key; sending
+    data to an address; asking for the conversation or system prompt; and
+    invisible characters (shown as `<U+200B>` and the like) or ones that
+    reorder text.
+  - **Medium:** telling the model to use or avoid other tools, long runs of
+    spaces that push text out of view, and encoded blobs.
+  - **Low:** very long descriptions, and tool names that look alike.
+
+  The scan is a set of patterns, so a finding is something to read, not
+  proof, and a clean scan isn't a guarantee.
+- **Call checks:** tool calls you list, with what you expect. Only these are
+  ever made. **Add call check**, choose the tool, give its **arguments** as
+  JSON (`{{variables}}` from the environment work, and are filled in
+  first), and what to expect: the **output contains** a text, the **value
+  at a path** (such as `items[0].id`, in the structured output or the text
+  read as JSON) **equals** a value, it answers **within** a number of
+  milliseconds, and whether **an error is fine**. **Skip** keeps a check
+  without running it. **Save call checks** keeps them with the server.
+
+**Save HTML report…** saves the checks as one page (the verdict, what
+changed, the findings, the calls and the contract), marked with the
+licence, and **Open** opens it. Kept contracts and call checks are stored
+with the workspace on this computer (not in exports yet), and go when the
+workspace is deleted or cleared.
 
 ### Running a collection in CI
 
@@ -918,7 +1115,8 @@ The export dialog offers these options:
   _credential_ or _session_. A value that is only a `{{variable}}` is
   always kept, so your teammate can use their own environment. Secrets
   typed directly into a request body or a script can't be detected, so
-  check those yourself.
+  check those yourself, or keep them in the [vault](#the-vault): a
+  `{{vault.name}}` reference is exported, its value never is.
 - **Include environments** (collection and section exports; off by
   default). Turn it on and choose which environments to include. A
   workspace export always includes all environments.
@@ -976,6 +1174,8 @@ fully or changes nothing.
   [Cookies](#cookies).
 - **Network…:** the proxy, certificate authorities and client
   certificates; see [Proxy and client certificates](#proxy-and-client-certificates).
+- **Vault…:** secrets kept encrypted on your computer and used as
+  `{{vault.name}}`; see [The vault](#the-vault).
 - **Verify TLS certificates** (on by default; a tick shows it's on): whether
   requests check servers' certificates, unless a request's own
   **Settings** tab says otherwise; see [TLS certificates](#tls-certificates).
@@ -1120,3 +1320,6 @@ A licence is one of three kinds:
   **Export** in the [Workspaces view](#managing-workspaces), then
   **Import new workspace…** there on the other computer. If you want the backup to include passwords and tokens, turn on
   **Include secrets** when you export.
+- Secrets in the [vault](#the-vault) are encrypted with your computer
+  login and never leave this computer: exports carry `{{vault.name}}`,
+  even with **Include secrets**.
