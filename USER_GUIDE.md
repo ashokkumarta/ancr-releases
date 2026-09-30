@@ -2,7 +2,7 @@
 
 # a.n.c.r — Fast. Local. Reliable.
 
-**User Guide · version 0.10.0**
+**User Guide · version 0.11.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -37,7 +37,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.10.0.exe`, from
+1. Download the installer, `ancr Setup 0.11.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -803,8 +803,8 @@ oldest first. Each has:
 - `key` and `headers`, for messaging protocols that have them
 
 ```js
-ancr.test("an order is paid within 5 s", () => {
-  const paid = ancr.messages.find((m) => m.channel === "orders" && m.json().status === "paid");
+ancr.test('an order is paid within 5 s', () => {
+  const paid = ancr.messages.find((m) => m.channel === 'orders' && m.json().status === 'paid');
   ancr.expect(paid).toBeDefined();
   ancr.expect(paid.at).toBeLessThan(5000);
 });
@@ -1004,6 +1004,7 @@ warnings** (a changed description or a medium finding) or **Passed**.
 
   The scan is a set of patterns, so a finding is something to read, not
   proof, and a clean scan isn't a guarantee.
+
 - **Call checks:** tool calls you list, with what you expect. Only these are
   ever made. **Add call check**, choose the tool, give its **arguments** as
   JSON (`{{variables}}` from the environment work, and are filled in
@@ -1018,6 +1019,22 @@ changed, the findings, the calls and the contract), marked with the
 licence, and **Open** opens it. Kept contracts and call checks are stored
 with the workspace on this computer (not in exports yet), and go when the
 workspace is deleted or cleared.
+
+### Running a collection from the terminal
+
+ancr comes with a command line, `ancr`. On Windows the installer puts it on
+your PATH (open a new terminal after installing); on macOS, choose
+**⚙ → Install 'ancr' command…** and enter your password. Then run an
+[export](#exporting) with its tests:
+
+```bash
+ancr run my-api.ancr.json --env CI --junit results.xml
+ancr GET https://api.example.com/users
+```
+
+It reads ancr exports and runs their `ancr.` scripts as they are, with the
+same options as `jt run` below (`ancr run --help`). It uses the app's own
+files, so it needs no Node.js.
 
 ### Running a collection in CI
 
@@ -1168,8 +1185,11 @@ fully or changes nothing.
 
   ancr's icon in the taskbar (Windows) or the Dock (Mac) follows your
   computer's theme rather than ancr's: a light icon on a light taskbar,
-  and a high-contrast one while a contrast theme is on. A pinned taskbar
-  button, shortcuts and the installer keep the standard icon.
+  and a high-contrast one while a contrast theme is on. On Windows, ancr's
+  Start menu, desktop and pinned taskbar shortcuts change with it (they
+  catch up when ancr next runs, if you change the theme while it's
+  closed). The installer and `ancr.exe` itself keep the standard icon.
+
 - **Cookies…:** the cookies ancr keeps between requests; see
   [Cookies](#cookies).
 - **Network…:** the proxy, certificate authorities and client
@@ -1289,6 +1309,13 @@ To turn Pro on, open **⚙ → Licence…** and paste your licence, or choose
 **Choose licence file…** and pick the `.ancr-licence` file you were sent.
 The panel then shows who it's for, its term, what it includes and when
 its updates end. **Remove licence** takes it off this computer.
+
+A licence can include all of Pro or some of it. Each of these is a
+feature of its own: **data-driven runs**, their **run reports** and **run
+baselines**, **load tests**, their **load reports and baselines**, and
+**MCP checks**. **⚙ → Licence…** lists what yours includes and what it
+doesn't, and where a feature isn't included, the app says so instead of
+offering it. Licences issued for 0.10.0 and earlier include everything.
 
 A licence is one of three kinds:
 
