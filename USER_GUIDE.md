@@ -1,6 +1,6 @@
 <img src="public/logo.svg" alt="a.n.c.r" height="72">
 
-# a.n.c.r — Fast. Local. Reliable.
+# Fast. Local. Reliable.
 
 **User Guide · version 0.11.0**
 
@@ -42,7 +42,9 @@ ancr runs on Windows. To install it:
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
    **Run anyway**.
-3. Follow the installer. You can choose the install folder.
+3. Follow the installer. You can choose the install folder, and whether to
+   include the [sample workspace](#trying-the-sample-workspace) (it's left out
+   unless you tick **Include the sample workspace**).
 4. Start ancr from the Start menu or the desktop shortcut.
 
 ### Updates
@@ -68,6 +70,11 @@ installer once from
 and install it over your current version. Your requests and settings are
 kept. From then on, updates arrive automatically.
 
+The first time a new version opens, a short screen says which version you're
+on now. If you have the [sample workspace](#trying-the-sample-workspace), it
+says it was replaced with the new version's; if you don't, it offers to add
+it (tick **Add the sample workspace**, then **Continue**).
+
 ### Uninstalling
 
 Open Windows **Settings → Apps**, find **ancr**, and choose **Uninstall**.
@@ -81,6 +88,11 @@ To keep your work, export your workspace first (see
 
 The first time ancr opens, a short welcome screen introduces its main
 features. Dismiss it to start working. It won't appear again.
+
+Where no installer asked about the [sample workspace](#trying-the-sample-workspace)
+(on a Mac, or installed as an MSIX package), the welcome screen offers it:
+tick **Add the sample workspace** before **Get started**. It's left out
+unless you do.
 
 ancr remembers the tabs you had open and reopens them the next time you
 start the app.
@@ -110,9 +122,20 @@ start the app.
   server, a messaging connection, or the details of a collection or folder.
 - **Bottom panel:** tabs under the sidebar and main panel.
   - **Logs** is always there: a running log of every request sent,
-    connection events and script output. Turn on **Trace** to log full
-    requests and responses (headers, params and body) instead of just the
-    status line. Click **Clear** to empty the log.
+    connection events (connecting, disconnecting and why, errors), the
+    messages you send, MCP calls, subscriptions and publishes, GraphQL schema
+    and gRPC reflection fetches, collection runs, data-driven runs and load
+    tests, and script output. Turn on **Trace** to log everything in full:
+    each request as written, for its protocol (an HTTP request's params,
+    headers, auth and body; a GraphQL query and its variables; a SOAP
+    action and envelope; a gRPC method, metadata and message; a WebSocket's
+    subprotocols; an MCP server's command or URL; a broker's options), each
+    response (status, headers and body, or a gRPC call's trailers and
+    reply), every stream message either way, each MCP call's arguments and
+    result, and each request of a collection run with its response, tests
+    and script output. Passwords and secrets are never logged, and an MCP
+    server's environment shows its names only. Click **Clear** to empty the
+    log.
   - A collection run opens in a **Runner** tab, and **⚙ → Diagnostics** in a
     **Diagnostics** tab. Close either with the **×** on its tab.
   - The panel starts collapsed; click the arrow on its header to expand or
@@ -1266,6 +1289,29 @@ servers covering everything ancr can do, with test scripts on every HTTP
 and GraphQL request. Every request goes to a free public test service, so
 it works straight away, with no sign-up or keys.
 
+### Included with the app
+
+Each version of ancr comes with its own sample workspace. It's added only
+if you ask for it: in the installer (**Include the sample workspace**), in
+the welcome screen where no installer asked, or in the screen shown after an
+update. It's off by default. It appears in the workspace list named for
+reference, with its version and the day it was added, such as
+**Sample (reference only) · v0.11.0 · installed 2026-10-01**, and the
+environment **Sample — httpbin** is in it. Adding it doesn't open it: pick it
+in the workspace list.
+
+The sample workspace is for reference only:
+
+- You can add, change and delete anything in it, as in any workspace.
+- **Each update replaces it.** The old sample workspace is deleted, with
+  everything you changed in it, and the new version's is added in its place.
+  Nothing from the old one is kept, so keep your own work in another
+  workspace (or copy what you want to keep into one first).
+- If you delete the sample workspace, updates don't add it again. The screen
+  shown after the next update offers it, or you can import it yourself.
+
+### Importing it yourself
+
 1. Download
    [ancr-sample-workspace.ancr.json](https://github.com/ashokkumarta/ancr-releases/raw/main/samples/ancr-sample-workspace.ancr.json).
    ([What's inside](https://github.com/ashokkumarta/ancr-releases/tree/main/samples).)
@@ -1275,25 +1321,35 @@ it works straight away, with no sign-up or keys.
 3. In the preview, tick **Import scripts**, then click **Import**.
 4. Pick **Sample — httpbin** in the environment switcher.
 
-It's added alongside your own work; nothing you already have changes.
+It's added alongside your own work; nothing you already have changes. A
+sample you import yourself is an ordinary workspace: updates leave it alone.
 
 ## History
 
-The **History** section of the activity bar lists the HTTP, GraphQL and unary
-gRPC requests you've sent, newest first and grouped by day, with each one's
-status and time (for gRPC, **OK** or the status code). Search by name or URL at the top. Click an entry to open it
-in a preview tab, as a copy of the request as it was sent, with its
-response; send it again, or change it first. Hover over an entry and click **×** to remove it, or
-click **Clear** to remove them all.
+The **History** section of the activity bar lists what you've sent, newest
+first and grouped by day: HTTP, GraphQL, SOAP and gRPC requests, and each
+connect of an SSE request, a gRPC stream, a WebSocket, an MCP server or a
+messaging connection, with the messages sent, the MCP tools called (and
+resources read, prompts got) and the messages published over it. Each shows
+its status and time (for gRPC, **OK** or the status code; **-** where there's
+no status, such as a connect or a message). Search by name or URL at the top.
+Click a request's entry to open it in a preview tab, as a copy of the request
+as it was sent, with its response; send it again, or change it first. A
+connection's entry shows what was done: what was sent and, for an MCP call or
+a publish, what came back, with **Open connection** while the connection is
+still saved. Hover over an entry and click **×** to remove it, or click
+**Clear** to remove them all.
 
 **Settings** at the top of History has:
 
-- **Record sent requests:** turn history on or off (it's on by default).
+- **Record requests and connections:** turn history on or off (it's on by default).
 - **Keep the last … requests:** 500 by default; older ones are removed.
 - **Store responses:** with this off, only each response's status, time and
-  size are kept, not its body or headers.
+  size are kept, not its body or headers. It applies to HTTP, GraphQL, SOAP
+  and unary gRPC responses, MCP calls' results and publishes' results; streams'
+  incoming messages aren't kept.
 
-Requests are kept as written, so `{{variables}}` stay as placeholders and
+Requests, connections and messages are kept as written, so `{{variables}}` stay as placeholders and
 the values from your environments (which can include tokens) aren't stored.
 Collection runs aren't recorded. Like everything else, history stays on your
 computer.
@@ -1309,6 +1365,11 @@ To turn Pro on, open **⚙ → Licence…** and paste your licence, or choose
 **Choose licence file…** and pick the `.ancr-licence` file you were sent.
 The panel then shows who it's for, its term, what it includes and when
 its updates end. **Remove licence** takes it off this computer.
+
+To buy a licence, click **Buy a Pro licence** in **⚙ → Licence…**; with a
+licence added, **Renew or buy more** is there instead. Each opens the
+[Pro licences page](https://github.com/ashokkumarta/ancr-releases/blob/main/LICENSING.md) in your browser: the kinds of
+licence, how to buy, renew and add one, and how to move it to another computer.
 
 A licence can include all of Pro or some of it. Each of these is a
 feature of its own: **data-driven runs**, their **run reports** and **run
