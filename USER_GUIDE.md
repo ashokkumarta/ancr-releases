@@ -2,7 +2,7 @@
 
 # Fast. Local. Reliable.
 
-**User Guide · version 0.11.0**
+**User Guide · version 0.12.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
@@ -37,7 +37,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.11.0.exe`, from
+1. Download the installer, `ancr Setup 0.12.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -63,12 +63,6 @@ off by themselves once the licence's updates have ended, and stay off: a
 newer version wouldn't run Pro, and the one you have keeps working with it.
 You can still check and download by hand; the banner says the new version
 won't run Pro. A renewed licence turns them back on as you had them.
-
-If you have version 0.1.0, it can't update itself: download the latest
-installer once from
-[github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases)
-and install it over your current version. Your requests and settings are
-kept. From then on, updates arrive automatically.
 
 The first time a new version opens, a short screen says which version you're
 on now. If you have the [sample workspace](#trying-the-sample-workspace), it
@@ -300,8 +294,6 @@ To test a server like that, turn the check off:
   request, a WebSocket connection or a messaging connection, and the
   **Headers / TLS** tab of an MCP server over HTTP. **As in Settings**
   (the default) follows the setting, and shows whether it's on or off.
-  Connections saved before this version that had the check on now follow
-  the setting; those that had it off stay off.
 
 A warning shows while the check is off, and a dot marks the tab. The
 connection is still encrypted, but ancr no longer checks who it's talking
@@ -1222,7 +1214,7 @@ fully or changes nothing.
 - **Verify TLS certificates** (on by default; a tick shows it's on): whether
   requests check servers' certificates, unless a request's own
   **Settings** tab says otherwise; see [TLS certificates](#tls-certificates).
-- **Licence…:** add or remove an a.n.c.r Pro licence; see
+- **Licence…:** add or remove a.n.c.r Pro licences, and see past ones; see
   [a.n.c.r Pro](#ancr-pro).
 - **Screen** (click it to see its items; collapsed, it shows the zoom
   level, and **Full screen** while the window is):
@@ -1296,7 +1288,7 @@ if you ask for it: in the installer (**Include the sample workspace**), in
 the welcome screen where no installer asked, or in the screen shown after an
 update. It's off by default. It appears in the workspace list named for
 reference, with its version and the day it was added, such as
-**Sample (reference only) · v0.11.0 · installed 2026-10-01**, and the
+**Sample (reference only) · v0.12.0 · installed 2026-10-03**, and the
 environment **Sample — httpbin** is in it. Adding it doesn't open it: pick it
 in the workspace list.
 
@@ -1366,6 +1358,14 @@ To turn Pro on, open **⚙ → Licence…** and paste your licence, or choose
 The panel then shows who it's for, its term, what it includes and when
 its updates end. **Remove licence** takes it off this computer.
 
+You can keep more than one licence: with Pro on, click **Add another
+licence**. Together they turn on everything any of them includes, and the
+panel lists each one. A licence bought ahead (for later, or as a renewal)
+has a start date: it's listed under **Waiting to start** and turns on by
+itself on that day. Licences you removed, and ones that have ended or been
+withdrawn, are listed under **View past licences**; one you removed that
+still works can be turned back on there with **Use again**.
+
 To buy a licence, click **Buy a Pro licence** in **⚙ → Licence…**; with a
 licence added, **Renew or buy more** is there instead. Each opens the
 [Pro licences page](https://github.com/ashokkumarta/ancr-releases/blob/main/LICENSING.md) in your browser: the kinds of
@@ -1376,7 +1376,7 @@ feature of its own: **data-driven runs**, their **run reports** and **run
 baselines**, **load tests**, their **load reports and baselines**, and
 **MCP checks**. **⚙ → Licence…** lists what yours includes and what it
 doesn't, and where a feature isn't included, the app says so instead of
-offering it. Licences issued for 0.10.0 and earlier include everything.
+offering it.
 
 A licence is one of three kinds:
 

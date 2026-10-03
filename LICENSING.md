@@ -48,15 +48,20 @@ them.
 
 ## Adding your licence
 
-1. In ancr, open **⚙ → Licence…**.
+1. In ancr, open **⚙ → Licence…** (with a licence already on,
+   click **Add another licence**).
 2. Paste the licence into the box and click **Add licence**, or click
    **Choose licence file…** and pick the `.ancr-licence` file.
 3. For a licence for one person, enter the email address it was issued to,
    then click **Activate**.
 
 The panel then shows who the licence is for, its term, what it includes and
-when its updates end. The licence is checked on your computer: nothing is
-sent anywhere, and there's no account.
+when its updates end. With more than one licence, Pro includes everything
+any of them does. A licence bought ahead has a start date: until then it's
+listed under **Waiting to start**, and it turns on by itself that day.
+Licences removed, ended or withdrawn are under **View past licences**. The
+licence is checked on your computer: nothing is sent anywhere, and there's
+no account.
 
 ## Renewing a licence
 
@@ -64,7 +69,8 @@ sent anywhere, and there's no account.
 subscription or trial, when it ends. To renew, click **Renew or buy more**
 there, or email **ashokkumar.ta@gmail.com** with your licence ID (shown in
 the panel as **Licence**) before that date. You'll get a renewed licence
-file: add it as above, and it takes the old one's place.
+file, starting when the old one ends: add it as above whenever you get it.
+It waits to start, then takes over from the old one with no gap.
 
 - **Perpetual:** renewing extends its updates, so newer versions run Pro too.
   Without renewing, keep the version you have: Pro keeps working in it.
