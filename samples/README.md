@@ -55,14 +55,12 @@ changed.
   the row as `ancr.iteration.data` (one written for Postman uses
   `pm.iterationData`). Run once without data, it fails, since `{{userId}}`
   has no value
-- **Response examples:** **REST CRUD → Get one post** keeps two, *Found*
-  and *Not found*, under it in the sidebar: click the arrow beside it
 - Basic, Bearer and API-key auth, sent as a header or in the query string;
   Digest auth; OAuth 2.0 client credentials (set `oauthTokenUrl`,
   `oauthClientId` and `oauthClientSecret` in the environment for your
   provider); and a client certificate (mutual TLS, see *Things to try*)
-- **Cookies:** a response that sets a cookie (through a redirect), a
-  request that sends it back, and one with the cookie jar turned off
+- **Cookies:** a response that sets a cookie (through a redirect), and a
+  request that sends it back
 - a test script written for Postman (`pm.test`, `pm.expect`,
   `pm.response`), which runs as written
 - 401, 404, 500 and 418 responses, redirects, a slow response, a large
@@ -119,8 +117,8 @@ changed.
 
 - streaming an answer from OpenAI's chat completions and from Anthropic's
   Messages API: an SSE request that POSTs a JSON body, with tests that
-  pass once the stream has ended: **Answer** shows the text as it arrives, with the tokens used and their cost
-- the same OpenAI request, not streamed, as a plain HTTP request, which shows its tokens and cost under the response
+  pass once the stream has ended: **Answer** shows the text as it arrives
+- the same OpenAI request, not streamed, as a plain HTTP request
 - a local model through Ollama's OpenAI-compatible API, which needs no key
   (`ollama run llama3.2` first)
 
@@ -170,8 +168,6 @@ to a different server.
   italics) that the next click replaces; send a request, or double-click
   its tab, to keep it. Connect a WebSocket sample, then switch to another
   tab: it stays connected in the background.
-- **Command palette:** press `Ctrl+K` (**⌘K** on a Mac) and type part of a
-  sample's name, e.g. _every matcher_.
 - **Collection runner:** run **Sample — HTTP** to send every request and
   see all the test results in one place.
 - **Timing:** send **Scripts & tests → Response headers, size and timing**
@@ -192,15 +188,12 @@ to a different server.
   open **⚙ → Network…**, add a client certificate for host
   `client.badssl.com` (PEM, choosing that file as both the certificate and
   the key, with the passphrase), **Save**, and send it again: 200.
-- **AI answers, tokens and cost:** set `openaiApiKey` in the environment
-  and connect **Sample — AI APIs → OpenAI: stream a chat completion**. The
-  answer appears as it's written, then the tokens it used and what they
-  cost, from **⚙ → AI model prices…** (add a model there to price it).
+- **AI answers:** set `openaiApiKey` in the environment and connect
+  **Sample — AI APIs → OpenAI: stream a chat completion**. The answer
+  appears as it's written.
 - **Workspaces:** make a second one from the header's workspace list
   (**⋯ → New workspace…**) and switch back: each keeps its own requests,
   environments, history and open tabs.
-- **Save a response as an example:** send any request, click **Save as
-  example**, and find it under the request in the sidebar.
 - **A SOAP service from its WSDL:** open **Import → WSDL (SOAP)** and paste
   `http://www.dneonline.com/calculator.asmx?WSDL`: you get the calculator's
   four operations for SOAP 1.1 and 1.2, each with its envelope ready to

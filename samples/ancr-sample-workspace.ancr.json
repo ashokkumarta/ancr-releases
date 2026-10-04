@@ -1156,27 +1156,7 @@
                 },
                 "protocol": "http",
                 "testScript": "ancr.test(\"status is 200\", () => {\n  ancr.expect(ancr.response.status).toBe(200);\n});"
-              },
-              "examples": [
-                {
-                  "name": "Found",
-                  "status": 200,
-                  "statusText": "OK",
-                  "headers": {
-                    "content-type": "application/json; charset=utf-8"
-                  },
-                  "body": "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\",\n  \"body\": \"quia et suscipit\\nsuscipit recusandae consequuntur expedita et cum\\nreprehenderit molestiae ut ut quas totam\\nnostrum rerum est autem sunt rem eveniet architecto\"\n}"
-                },
-                {
-                  "name": "Not found (an id that doesn’t exist)",
-                  "status": 404,
-                  "statusText": "Not Found",
-                  "headers": {
-                    "content-type": "application/json; charset=utf-8"
-                  },
-                  "body": "{}"
-                }
-              ]
+              }
             },
             {
               "type": "request",
@@ -1290,24 +1270,6 @@
                   "type": "none"
                 },
                 "testScript": "ancr.test(\"the kept cookie is sent\", () => ancr.expect(ancr.response.json().cookies.flavour).toBe(\"oatmeal\"));"
-              }
-            },
-            {
-              "type": "request",
-              "name": "Without the cookie jar",
-              "config": {
-                "method": "GET",
-                "url": "https://httpbin.org/cookies",
-                "params": [],
-                "headers": [],
-                "body": {
-                  "mode": "none"
-                },
-                "auth": {
-                  "type": "none"
-                },
-                "useCookies": false,
-                "testScript": "ancr.test(\"no cookies are sent\", () => ancr.expect(ancr.response.json().cookies).toEqual({}));"
               }
             }
           ]

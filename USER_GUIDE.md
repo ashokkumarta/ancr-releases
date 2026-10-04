@@ -2,13 +2,12 @@
 
 # Fast. Local. Reliable.
 
-**User Guide · version 0.12.0**
+**User Guide · version 0.13.0**
 
 ancr is a desktop API client for building, sending, testing and sharing API
 requests. It works entirely on your own computer: there's no account, no
 sign-in and no cloud sync. Your collections, environments and settings are
-stored locally. ancr only connects to the APIs you send requests to, plus a
-check for new versions of ancr itself.
+stored locally. ancr only connects to the APIs you send requests to.
 
 **What you can do with ancr:**
 
@@ -37,7 +36,7 @@ check for new versions of ancr itself.
 
 ancr runs on Windows. To install it:
 
-1. Download the installer, `ancr Setup 0.12.0.exe`, from
+1. Download the installer, `ancr Setup 0.13.0.exe`, from
    [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases/releases),
    and run it.
 2. If Windows shows _"Windows protected your PC"_, click **More info**, then
@@ -49,25 +48,10 @@ ancr runs on Windows. To install it:
 
 ### Updates
 
-ancr checks for a new version each time it starts. When one is available,
-it downloads in the background and a banner offers **Restart to update**.
-You can also check at any time with **⚙ → Check for Updates**. If you're
-offline, the check just doesn't happen; it never gets in your way.
-
-**⚙ → Automatic updates** (on by default) turns this off: ancr then doesn't
-check when it starts, and **Check for Updates** tells you about a new version
-and downloads it only if you click **Download**.
-
-With a perpetual [a.n.c.r Pro](#ancr-pro) licence, automatic updates turn
-off by themselves once the licence's updates have ended, and stay off: a
-newer version wouldn't run Pro, and the one you have keeps working with it.
-You can still check and download by hand; the banner says the new version
-won't run Pro. A renewed licence turns them back on as you had them.
-
-The first time a new version opens, a short screen says which version you're
-on now. If you have the [sample workspace](#trying-the-sample-workspace), it
-says it was replaced with the new version's; if you don't, it offers to add
-it (tick **Add the sample workspace**, then **Continue**).
+ancr doesn't check for new versions. To update it, run a newer installer: it
+installs over the version you have and keeps your requests and settings.
+If you have the [sample workspace](#trying-the-sample-workspace), the new
+version replaces it with its own.
 
 ### Uninstalling
 
@@ -80,15 +64,7 @@ To keep your work, export your workspace first (see
 
 ## First launch
 
-The first time ancr opens, a short welcome screen introduces its main
-features. Dismiss it to start working. It won't appear again.
-
-Where no installer asked about the [sample workspace](#trying-the-sample-workspace)
-(on a Mac, or installed as an MSIX package), the welcome screen offers it:
-tick **Add the sample workspace** before **Get started**. It's left out
-unless you do.
-
-ancr remembers the tabs you had open and reopens them the next time you
+ancr opens on your workspace, **My Workspace**, ready to use. It remembers the tabs you had open and reopens them the next time you
 start the app.
 
 ## The main window
@@ -130,8 +106,8 @@ start the app.
     and script output. Passwords and secrets are never logged, and an MCP
     server's environment shows its names only. Click **Clear** to empty the
     log.
-  - A collection run opens in a **Runner** tab, and **⚙ → Diagnostics** in a
-    **Diagnostics** tab. Close either with the **×** on its tab.
+  - A collection run opens in a **Runner** tab. Close it with the **×** on
+    its tab.
   - The panel starts collapsed; click the arrow on its header to expand or
     collapse it. Drag its top edge to change its height.
 - **Manage** (environments) and **Import** open in a panel over the right
@@ -164,7 +140,7 @@ Deleting an item closes its tab, and renaming it renames the tab.
 
 A **workspace** holds everything you work on: its collections, folders,
 requests and connections, its environments, its **History**, cookies and
-OAuth 2.0 tokens, its response examples, the tabs you had open and this
+OAuth 2.0 tokens, the tabs you had open and this
 session's logs. ancr starts with one, **My Workspace**, and you can add
 more, for example one per project or client. One is open at a time, and
 ancr reopens the last one you used.
@@ -182,8 +158,7 @@ The workspace list is in the header, next to the environments:
 
 ### Managing workspaces
 
-The **Workspaces** view (**⋯ → Manage workspaces…**, or **Workspace:
-Manage workspaces** in the command palette) takes the place of the tabs in
+The **Workspaces** view (**⋯ → Manage workspaces…**) takes the place of the tabs in
 the main panel. It shows every workspace as a card with a count of what's
 in it: requests, WebSocket, MCP and messaging connections, folders,
 environments, History entries and cookies. The open one is marked **Currently open**.
@@ -229,19 +204,20 @@ Each section starts with one collection: **My Collection** (API),
 - Hover over a collection or folder to see its quick actions:
   - **New request / connection / server** here
   - **New folder**
-  - **▶ Run** (API only)
   - **Rename**
   - **Delete**
 
-  Every icon has a tooltip.
+  Hover over a request, connection or server to rename or delete it. Every
+  icon has a tooltip.
 
 - Click a collection or folder's **name** to see its details in the main
   panel:
   - its type and creation date
   - how many folders and items it holds
   - a clickable list of its contents
-  - buttons for every action: **New**, **New folder**, **Run all** (API),
-    **Export**, **Rename** and **Delete**
+  - buttons for every action: **New**, **New folder**, **Run all**,
+    **Run with data** and **Load test** (API), **Export**, **Rename** and
+    **Delete**
 
   In the details view, you can also click the name at the top to rename it.
 
@@ -271,7 +247,7 @@ are unsaved, ancr asks whether to save them first.
 
 The request tabs are **Params**, **Auth**, **Headers**, a body tab
 (**Body**, **Query** or **Message**, depending on the protocol),
-**Settings**, **Pre-request Script**, **Tests** and **`</> Code`**. A dot on
+**Pre-request Script**, **Tests** and **`</> Code`**. A dot on
 a tab means it has content. Click a tab again to close it.
 
 ### TLS certificates
@@ -281,28 +257,16 @@ connection, and refuses a server whose certificate is self-signed, expired
 or issued for another host. The error in **Logs** says why, for example
 `self-signed certificate (DEPTH_ZERO_SELF_SIGNED_CERT)`.
 
-To test a server like that, turn the check off:
+To test a server like that, turn the check off: untick
+**⚙ → Verify TLS certificates**. It's on by
+default, and it applies to every request, WebSocket and messaging
+connection and MCP server alike, so turning it back on turns the check back
+on for all of them. While it's off, the **`</> Code`** snippets include each
+language's equivalent.
 
-- **For everything:** untick **⚙ → Verify TLS certificates** (or run
-  **Network: Turn TLS certificate checks on or off** from the command
-  palette). It's on by default. Every request, WebSocket and messaging
-  connection and MCP server that doesn't set its own follows it, so
-  turning it back on turns the check back on for all of them.
-- **For one of them:** set **Verify TLS certificates** to **Off for this
-  request** (or connection, or server), or **On for this …** to check it
-  even while the setting is off. It's on the **Settings** tab of a
-  request, a WebSocket connection or a messaging connection, and the
-  **Headers / TLS** tab of an MCP server over HTTP. **As in Settings**
-  (the default) follows the setting, and shows whether it's on or off.
-
-A warning shows while the check is off, and a dot marks the tab. The
-connection is still encrypted, but ancr no longer checks who it's talking
-to, so only do this for servers you control, and only where you need it.
-
-Importing a cURL command with `-k` or `--insecure`, or a Postman request
-with SSL certificate verification off, sets that request to **Off for this
-request**, and the **`</> Code`** snippets include each language's
-equivalent.
+The connection is still encrypted, but ancr no longer checks who it's
+talking to, so only turn the check off for servers you control, and only
+while you need it.
 
 ### Proxy and client certificates
 
@@ -350,14 +314,11 @@ cookies too, so a cookie set by a login's redirect isn't lost. A cookie with
 no expiry is kept until you delete it.
 
 The response's **Cookies** tab shows what that response set. To see every
-kept cookie, open **Settings (⚙) → Cookies…** (or **Cookies: Manage** in the
-command palette): they're listed by domain, and you can add, edit or delete
+kept cookie, open **Settings (⚙) → Cookies…**: they're listed by domain, and you can add, edit or delete
 one, or delete all of a domain's. Each workspace has its own cookies.
 
-To send a request without them, untick **Use the cookie jar** on its
-**Settings** tab: it then sends no kept cookies and keeps none it's given.
-A `Cookie` header you add yourself is always sent; for a cookie in both,
-yours wins.
+Every request uses them. A `Cookie` header you add yourself is always sent
+too; for a cookie in both, yours wins.
 
 ### HTTP
 
@@ -409,22 +370,8 @@ when they expire, and their flags (Secure, HttpOnly, SameSite).
 request to the first byte of the response) and **Download**. A request that
 reused an open connection has no DNS, connect or TLS time.
 
-The request and the response share the main panel. Drag the line between
-them to give either more room, and click **Side by side** (or **Stacked**)
-to put the response beside the request or under it. ancr remembers both.
-
-### Response examples
-
-To keep a response as an example of what a saved request returns (the
-happy path, a 404, an error), click **Save as example** next to its status
-and give it a name. Examples are listed under their request in the sidebar
-(click the arrow beside the request to show or hide them); click one to
-open it in a tab of its own, with its status, headers and body. From there
-you can **Rename** or **Delete** it, or go back to its request.
-
-Examples are saved with the request, go with it into exports (with secret
-headers such as `Set-Cookie` blanked unless you include secrets), and are
-deleted with it. A Postman collection's saved responses import as examples.
+The request and its response share the main panel, the response below.
+Drag the line between them to give either more room; ancr remembers it.
 
 ### OAuth 2.0
 
@@ -492,24 +439,6 @@ as it arrives, and which API's format it's in. A request without
 `"stream": true` gets the whole answer at once; it shows the same way. If
 the API refuses the request (a wrong key, an unknown model), the error
 shows the API's own explanation.
-
-#### Tokens and cost
-
-When an AI API's answer says how many tokens it used (OpenAI, Anthropic
-and Gemini all do), ancr shows them under the answer: input, output and
-total, with the model. For OpenAI's streams, ask for them with
-`"stream_options": { "include_usage": true }` in the body. It works for a
-plain **HTTP** request to an AI API too, under the response's status.
-
-The **cost** is shown when the model is in the price table, **⚙ → AI model
-prices…**. It starts with the main OpenAI, Anthropic and Gemini models, at
-the prices their price pages gave on the date shown there; prices change,
-so check yours. Edit a price, **+ Add model** for any other (a local model,
-another provider), or remove one, then **Save**; **Use the starter prices**
-goes back to the table ancr came with. A price covers its model's dated
-versions too (`claude-haiku-4-5` covers `claude-haiku-4-5-20251001`), but
-not other models whose names start the same way. Discounts for prompt
-caching and batches aren't counted.
 
 ### SOAP
 
@@ -621,8 +550,9 @@ change:
 - **Auth:** a username and password (**Basic**) for every kind, which
   Kafka sends with SASL, or a token (**Bearer**) for NATS and Socket.IO.
 - **Settings:** the kind's own options, such as the MQTT version and client
-  ID, Kafka's SASL mechanism, or Socket.IO's path and auth payload, and
-  **Verify TLS certificates** (see [TLS certificates](#tls-certificates)).
+  ID, Kafka's SASL mechanism, or Socket.IO's path and auth payload.
+  Certificates are checked as **⚙ → Verify TLS certificates** says (see
+  [TLS certificates](#tls-certificates)).
 - **Headers:** sent with the connection's handshake, for Socket.IO and for
   MQTT over `ws://` or `wss://`.
 - **Subscriptions:** add a channel with its options (MQTT's QoS, a Kafka
@@ -845,8 +775,8 @@ scripts from shared files unless you ask it to.
 
 ## Running a collection
 
-Click **▶ Run** on any API collection or folder (in the sidebar or its
-details panel). ancr runs every HTTP and GraphQL request inside it,
+Click a collection or folder's name in the sidebar, then **Run all** in its
+details panel. ancr runs every HTTP and GraphQL request inside it,
 including sub-folders, in order, using the active environment. You see live progress, then a
 report:
 
@@ -855,10 +785,10 @@ report:
 - requests that failed to send
 - total time
 
-### Running with data (Pro)
+### Running with data
 
-With an [a.n.c.r Pro](#ancr-pro) licence, the **table** icon next to ▶ Run
-(**Run this collection with data**, or folder) runs every request once per
+**Run with data**, next to **Run all** in a collection's or folder's
+details panel, runs every request once per
 row of test data, or a number of times:
 
 - **A data file:** click **Choose data file…** and pick a CSV file (a header
@@ -891,10 +821,6 @@ outcome. To keep or share them:
   per iteration), and **Save CSV…** for a spreadsheet (a row per request per
   iteration, with a column per data value).
 
-Every report, and the runner, shows who the licence is for and its id
-("Licensed to …"): the HTML report at its foot, the JUnit file as each
-suite's properties, the CSV file as a last line starting with `#`.
-
 #### Baselines
 
 To see what changed since a run you trust, click **Keep as baseline** after
@@ -920,13 +846,10 @@ first), and **Clear baseline** removes it. A baseline holds each request's
 outcome, status and time, never the responses themselves, and goes when its
 workspace is deleted or cleared.
 
-Without a licence the icon still opens the runner, which explains what it
-does and how to add a licence.
+### Load testing
 
-### Load testing (Pro)
-
-With an [a.n.c.r Pro](#ancr-pro) licence, the **gauge** icon next to ▶ Run
-(**Load test this collection**, or folder) runs its requests with many
+**Load test**, next to **Run all** in a collection's or folder's details
+panel, runs its requests with many
 **virtual users** at once, to see how a server holds up. Each user goes
 through the requests in order, again and again, like someone using the
 app.
@@ -944,7 +867,7 @@ The settings:
 - **Think time** between one request and the next, per user.
 - **Use a data file:** hand out a CSV or JSON file's rows, one per round, as
   `{{variables}}` and `ancr.iteration` (as in [running with
-  data](#running-with-data-pro)).
+  data](#running-with-data)).
 - **Run pre-request and test scripts** (on by default). Turn it off for raw
   throughput. When they run, a failed test counts as a failed request.
 - **Thresholds** (optional): the 95th-percentile latency must stay under a
@@ -969,7 +892,6 @@ request; the status codes; and the most frequent problems.
 
 - **Save HTML report…** saves it as a single page with charts, like the data
   runner's report, and **Save CSV…** saves the timeline, a row per second.
-  Both are marked with the licence.
 - **Keep as load baseline** keeps the test for that collection or folder.
   Later tests are compared with it: throughput, error rate and latency
   (median, 95th and 99th percentile), overall and per request, where they
@@ -979,15 +901,15 @@ request; the status codes; and the most frequent problems.
   different settings. **Clear load baseline** removes it. A collection or
   folder keeps its load baseline apart from its data-run one.
 
-### Checking MCP servers (Pro)
+### Checking MCP servers
 
 An MCP server's tools are instructions to an AI model as much as they are
 functions: the model reads each tool's description to decide what to do. A
 description can quietly tell the model to read a secret or keep something
 from you ("tool poisoning"), and a server can change its tools after you've
-started trusting it. With an [a.n.c.r Pro](#ancr-pro) licence, the
-**Checks** tab of a saved MCP server checks it for you, on a connection of
-its own (a stdio server's command runs as it does when you connect). Save
+started trusting it. The **Checks** tab of a saved MCP server checks it
+for you, on a connection of its own (a stdio server's command runs as it
+does when you connect). Save
 the server first: the checks use the saved server.
 
 **Run checks** does three things, and gives a verdict: **Failed** (a
@@ -1030,26 +952,10 @@ warnings** (a changed description or a medium finding) or **Passed**.
   without running it. **Save call checks** keeps them with the server.
 
 **Save HTML report…** saves the checks as one page (the verdict, what
-changed, the findings, the calls and the contract), marked with the
-licence, and **Open** opens it. Kept contracts and call checks are stored
+changed, the findings, the calls and the contract), and **Open** opens
+it. Kept contracts and call checks are stored
 with the workspace on this computer (not in exports yet), and go when the
 workspace is deleted or cleared.
-
-### Running a collection from the terminal
-
-ancr comes with a command line, `ancr`. On Windows the installer puts it on
-your PATH (open a new terminal after installing); on macOS, choose
-**⚙ → Install 'ancr' command…** and enter your password. Then run an
-[export](#exporting) with its tests:
-
-```bash
-ancr run my-api.ancr.json --env CI --junit results.xml
-ancr GET https://api.example.com/users
-```
-
-It reads ancr exports and runs their `ancr.` scripts as they are, with the
-same options as `jt run` below (`ancr run --help`). It uses the app's own
-files, so it needs no Node.js.
 
 ### Running a collection in CI
 
@@ -1188,63 +1094,27 @@ fully or changes nothing.
 
 ## Settings menu (⚙)
 
-- **Theme** (click it to see the choices; collapsed, it shows the one
-  you're using, and under System which theme that is right now):
+- **Theme** (always shown, with a tick on the one you're using):
   **System** (the default) follows your computer's light or dark
-  setting and switches when it does. **Dark** and **Light** keep ancr in one
-  theme. **High contrast** is a black theme with white text and bright
-  colours, stronger borders and a thicker focus outline, for the most
-  legible text (WCAG AAA contrast). Your choice is remembered. Windows'
+  setting and switches when it does, until you pick **Dark** or **Light**, which keep
+  ancr in one theme. Your choice is remembered. Windows'
   own high-contrast themes (Settings → Accessibility → Contrast themes)
   work too: ancr then uses your system's colours.
-
-  ancr's icon in the taskbar (Windows) or the Dock (Mac) follows your
-  computer's theme rather than ancr's: a light icon on a light taskbar,
-  and a high-contrast one while a contrast theme is on. On Windows, ancr's
-  Start menu, desktop and pinned taskbar shortcuts change with it (they
-  catch up when ancr next runs, if you change the theme while it's
-  closed). The installer and `ancr.exe` itself keep the standard icon.
 
 - **Cookies…:** the cookies ancr keeps between requests; see
   [Cookies](#cookies).
 - **Network…:** the proxy, certificate authorities and client
   certificates; see [Proxy and client certificates](#proxy-and-client-certificates).
+- **Verify TLS certificates** (on by default; a tick shows it's on): whether
+  every request and connection checks servers' certificates; see
+  [TLS certificates](#tls-certificates).
 - **Vault…:** secrets kept encrypted on your computer and used as
   `{{vault.name}}`; see [The vault](#the-vault).
-- **Verify TLS certificates** (on by default; a tick shows it's on): whether
-  requests check servers' certificates, unless a request's own
-  **Settings** tab says otherwise; see [TLS certificates](#tls-certificates).
-- **Licence…:** add or remove a.n.c.r Pro licences, and see past ones; see
-  [a.n.c.r Pro](#ancr-pro).
-- **Screen** (click it to see its items; collapsed, it shows the zoom
-  level, and **Full screen** while the window is):
-  - **Reload:** reloads the window.
-  - **Actual Size**, **Zoom In** and **Zoom Out:** change the text size.
-    The menu stays open, so you can click them a few times and watch the
-    level change.
-  - **Full Screen:** turns full screen on or off (also **F11**); a tick
-    shows it's on.
-- **Check for Updates**
-- **Diagnostics:** shows the ancr version and system details, and any crash
-  reports. Crash reports stay on your computer and are never sent anywhere.
-  You can open their folder or clear them from here.
-- **Help:** opens this guide inside ancr, over the right side of the window (like **?** on the activity bar). It works offline.
-  **Search the guide** at the top (or **Ctrl+F**, **⌘F** on a Mac, while
-  it's open) finds text in it: every match is highlighted, **Enter** and
-  **↓** go to the next, **Shift+Enter** and **↑** to the previous, and
-  **Esc** clears the search. **Open the
-  online guide** at the top opens the same guide, for your version, in your
-  browser; each release publishes its guide at
+- **Help:** opens this guide, for your version, in your browser (like **?**
+  on the activity bar, or **F1**). Each release publishes its guide at
   [github.com/ashokkumarta/ancr-releases](https://github.com/ashokkumarta/ancr-releases).
 
-## Command palette and keyboard shortcuts
-
-Press `Ctrl+K` (**⌘K** on a Mac) to open the command palette. Type to
-search every command, and every saved request, WebSocket connection, MCP
-server, messaging connection, collection and folder, by name. The letters you type only need to
-appear in order, so _gtus_ finds _Get users_. Use the arrow keys to pick a
-result, **Enter** to run or open it, and **Escape** to close the palette.
-Each command shows its shortcut, if it has one.
+## Keyboard shortcuts
 
 The shortcuts work anywhere in the window, including while you're typing in
 a field or an editor. On a Mac, use **⌘** in place of **Ctrl** (Ctrl+Tab
@@ -1252,7 +1122,6 @@ stays Ctrl+Tab).
 
 | Shortcut                          | Command                                     |
 | --------------------------------- | ------------------------------------------- |
-| `Ctrl+K` or `Ctrl+Shift+P`        | Show all commands                           |
 | `Ctrl+Enter`                      | Send the open request                       |
 | `Ctrl+S`                          | Save the open request, connection or server |
 | `Ctrl+N`                          | New request                                 |
@@ -1262,17 +1131,7 @@ stays Ctrl+Tab).
 | `Ctrl+B`                          | Show or hide the sidebar                    |
 | `Ctrl+J`                          | Show or hide the bottom panel               |
 | `Ctrl+Shift+H`                    | Show History                                |
-| `Ctrl+=`                          | Zoom in                                     |
-| `Ctrl+-`                          | Zoom out                                    |
-| `Ctrl+0`                          | Actual size                                 |
-| `F11`                             | Full screen                                 |
 | `F1`                              | This guide                                  |
-
-The palette also has commands without shortcuts: closing other or all tabs,
-keeping a preview tab, showing each sidebar section, managing environments
-and cookies,
-importing and exporting, clearing the logs or switching trace mode, the
-themes, and Diagnostics.
 
 ## Trying the sample workspace
 
@@ -1284,11 +1143,11 @@ it works straight away, with no sign-up or keys.
 ### Included with the app
 
 Each version of ancr comes with its own sample workspace. It's added only
-if you ask for it: in the installer (**Include the sample workspace**), in
-the welcome screen where no installer asked, or in the screen shown after an
-update. It's off by default. It appears in the workspace list named for
+if you ask for it, in the Windows installer (**Include the sample
+workspace**); it's off by default. Elsewhere, such as on a Mac,
+[import it yourself](#importing-it-yourself). It appears in the workspace list named for
 reference, with its version and the day it was added, such as
-**Sample (reference only) · v0.12.0 · installed 2026-10-03**, and the
+**Sample (reference only) · v0.13.0 · installed 2026-10-04**, and the
 environment **Sample — httpbin** is in it. Adding it doesn't open it: pick it
 in the workspace list.
 
@@ -1299,8 +1158,8 @@ The sample workspace is for reference only:
   everything you changed in it, and the new version's is added in its place.
   Nothing from the old one is kept, so keep your own work in another
   workspace (or copy what you want to keep into one first).
-- If you delete the sample workspace, updates don't add it again. The screen
-  shown after the next update offers it, or you can import it yourself.
+- If you delete the sample workspace, updates don't add it again; you can
+  import it yourself.
 
 ### Importing it yourself
 
@@ -1346,64 +1205,11 @@ the values from your environments (which can include tokens) aren't stored.
 Collection runs aren't recorded. Like everything else, history stays on your
 computer.
 
-## a.n.c.r Pro
-
-a.n.c.r is free for any use, and everything described above stays free.
-**Pro** adds what runs automatically and repeatedly, starting with
-[data-driven runs](#running-with-data-pro) of a collection. Where the app
-offers a Pro feature, it's marked **Pro**.
-
-To turn Pro on, open **⚙ → Licence…** and paste your licence, or choose
-**Choose licence file…** and pick the `.ancr-licence` file you were sent.
-The panel then shows who it's for, its term, what it includes and when
-its updates end. **Remove licence** takes it off this computer.
-
-You can keep more than one licence: with Pro on, click **Add another
-licence**. Together they turn on everything any of them includes, and the
-panel lists each one. A licence bought ahead (for later, or as a renewal)
-has a start date: it's listed under **Waiting to start** and turns on by
-itself on that day. Licences you removed, and ones that have ended or been
-withdrawn, are listed under **View past licences**; one you removed that
-still works can be turned back on there with **Use again**.
-
-To buy a licence, click **Buy a Pro licence** in **⚙ → Licence…**; with a
-licence added, **Renew or buy more** is there instead. Each opens the
-[Pro licences page](https://github.com/ashokkumarta/ancr-releases/blob/main/LICENSING.md) in your browser: the kinds of
-licence, how to buy, renew and add one, and how to move it to another computer.
-
-A licence can include all of Pro or some of it. Each of these is a
-feature of its own: **data-driven runs**, their **run reports** and **run
-baselines**, **load tests**, their **load reports and baselines**, and
-**MCP checks**. **⚙ → Licence…** lists what yours includes and what it
-doesn't, and where a feature isn't included, the app says so instead of
-offering it.
-
-A licence is one of three kinds:
-
-- **For an organisation:** works on any of its computers, for the number of
-  people (seats) it was bought for.
-- **For one person:** when you add it, enter the email address it was issued
-  to, to activate it.
-- **For one computer:** works only on the computer it was issued for. To buy
-  one, send the **machine ID** shown in **⚙ → Licence…** (click **Copy**). The
-  ID comes from your operating system's own id for the computer, as a hash,
-  and changes if the operating system is reinstalled.
-
-- The licence is checked on your computer, with its signature; nothing is
-  sent anywhere, and there's no account.
-- **Perpetual** licences keep working for good with the versions released
-  until their updates end; a newer version asks for a renewed licence.
-  **Subscription** and **trial** licences end on their end date.
-- If a licence isn't accepted, the panel says why (for example, it's for
-  another product, it has ended, this version is newer than its updates, or
-  it has been withdrawn).
-
 ## Your data and privacy
 
 - Everything you create is stored only on your computer.
 - ancr has no telemetry and never sends your data anywhere. It connects
-  only to the APIs you send requests to, and to check for ancr updates.
-- A Pro licence is checked on your computer; ancr never sends it anywhere.
+  only to the APIs you send requests to.
 - To back up your work or move it to another computer, use
   **Export** in the [Workspaces view](#managing-workspaces), then
   **Import new workspace…** there on the other computer. If you want the backup to include passwords and tokens, turn on
